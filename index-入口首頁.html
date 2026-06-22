@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 賦能教學 · 平台入口｜AI-Empowered Teaching Platforms</title>
+<meta name="description" content="運算思維與 4C 核心素養教學平台入口。Entry portal for Computational Thinking and 4C core-competency teaching platforms.">
+<style>
+:root{
+  --primary:#1E3A8A; --accent:#3B82F6;
+  --c-mind:#2563EB; --bg-mind:#DBEAFE;
+  --c-ipo:#7C3AED;  --bg-ipo:#EDE9FE;
+  --c-py:#DB2777;   --bg-py:#FCE7F3;
+  --c-eco:#0D9488;  --bg-eco:#CCFBF1;
+  --ink:#1F2937; --mute:#6B7280; --line:#E5E7EB; --soft:#F8FAFC;
+  --shadow:0 1px 3px rgba(16,24,40,.07),0 8px 24px rgba(16,24,40,.06);
+  --shadow-lg:0 12px 36px rgba(16,24,40,.14);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC","Segoe UI",sans-serif;
+  color:var(--ink);background:#F1F5F9;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+.en{font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif}
+.wrap{max-width:1160px;margin:0 auto;padding:0 22px}
+
+/* top bar */
+nav{background:#fff;box-shadow:var(--shadow);position:sticky;top:0;z-index:30}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:14px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;color:var(--primary);font-size:16px}
+.brand .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--primary),var(--accent));
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px}
+.brand small{display:block;font-size:10px;font-weight:600;color:var(--mute);letter-spacing:.5px}
+.nav-links{display:flex;gap:4px;flex-wrap:wrap}
+.nav-links a{padding:8px 13px;border-radius:8px;font-size:14px;font-weight:600;color:var(--mute);transition:.2s}
+.nav-links a:hover{color:var(--primary);background:var(--soft)}
+.nav-links a small{display:block;font-size:10px;font-weight:500;opacity:.8}
+@media(max-width:560px){.nav-links{display:none}}
+
+/* hero */
+.hero{background:linear-gradient(135deg,var(--primary),#3457C5 60%,#5B6FE0);color:#fff;
+  border-radius:18px;padding:46px 34px;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden;margin:26px 0 22px}
+.hero::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 15% 20%,rgba(255,255,255,.12),transparent 40%),
+            radial-gradient(circle at 85% 80%,rgba(255,255,255,.1),transparent 45%)}
+.hero>*{position:relative}
+.hero-tag{font-size:12px;letter-spacing:2px;opacity:.85;font-weight:700;margin-bottom:11px}
+.hero h1{font-size:30px;letter-spacing:.5px;margin-bottom:5px;line-height:1.35}
+.hero h1 .en{font-size:18px;font-weight:600;opacity:.9;display:block;margin-top:6px;letter-spacing:.5px}
+.hero-sub{font-size:14.5px;opacity:.94;max-width:780px;margin:14px auto 0;line-height:1.85}
+.hero-sub .en{font-size:13px;opacity:.85;display:block;margin-top:7px}
+.hero-flow{display:inline-flex;gap:9px;margin-top:24px;flex-wrap:wrap;justify-content:center;align-items:center}
+.hero-flow .eco{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);
+  padding:8px 15px;border-radius:14px;font-size:13px;font-weight:700;text-align:center;line-height:1.4}
+.hero-flow .eco small{display:block;font-size:10px;font-weight:500;opacity:.85;letter-spacing:.3px}
+.hero-flow .arr{opacity:.7;font-weight:800}
+@media(max-width:680px){.hero-flow .arr{display:none}}
+
+/* section heading */
+.sec-head{display:flex;align-items:center;gap:11px;margin:34px 0 16px}
+.sec-head .bar{width:5px;height:24px;background:var(--accent);border-radius:3px}
+.sec-head h2{font-size:21px;color:var(--primary)}
+.sec-head h2 .en{font-size:14px;font-weight:600;color:var(--mute);margin-left:8px}
+.sec-head p{font-size:13px;color:var(--mute);margin-top:2px}
+
+/* platform cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.pcard{background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:24px;position:relative;
+  display:flex;flex-direction:column;border-top:4px solid var(--accent);transition:transform .2s,box-shadow .2s}
+.pcard:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+.pcard .ic{width:52px;height:52px;border-radius:13px;display:flex;align-items:center;justify-content:center;
+  font-size:26px;margin-bottom:14px}
+.pcard h3{font-size:18px;color:var(--primary);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pcard .en-name{font-size:13px;font-weight:600;color:var(--mute);margin:2px 0 9px}
+.pcard .url{font-size:12px;color:var(--mute);font-family:"Consolas",monospace;margin-bottom:12px;word-break:break-all}
+.pcard .desc{font-size:14px;color:var(--ink);line-height:1.7}
+.pcard .desc .en{font-size:12.5px;color:var(--mute);display:block;margin-top:6px;line-height:1.65}
+.pcard .tags{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 16px;flex:1;align-content:flex-start}
+.pcard .tag{font-size:11px;font-weight:700;padding:3px 9px;border-radius:7px;height:fit-content}
+.pcard .go{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;
+  color:#fff;font-weight:700;font-size:14px;padding:10px 20px;border-radius:9px;transition:.2s}
+.hot-tag{font-size:10px;font-weight:800;background:linear-gradient(135deg,#F59E0B,#DB2777);
+  color:#fff;padding:3px 9px;border-radius:20px;letter-spacing:.3px}
+
+/* youtube card */
+.yt{background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:0;display:flex;align-items:center;gap:18px;
+  border-left:4px solid #DC2626;transition:transform .2s,box-shadow .2s;overflow:hidden}
+.yt:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.yt .pl{flex:0 0 84px;height:84px;margin:14px 0 14px 14px;border-radius:12px;
+  background:linear-gradient(135deg,#DC2626,#F87171);color:#fff;display:flex;align-items:center;justify-content:center;font-size:34px}
+.yt .tx{padding:16px 16px 16px 0}
+.yt .tx b{font-size:17px;color:var(--primary);display:block;margin-bottom:2px}
+.yt .tx .en{font-size:13px;color:var(--mute);font-weight:600;display:block;margin-bottom:3px}
+.yt .tx span{font-size:13px;color:var(--mute)}
+
+footer{text-align:center;color:var(--mute);font-size:12.5px;padding:34px 22px 40px;line-height:1.9}
+footer .affil{color:var(--ink);font-weight:700}
+footer .affil .en{display:block;font-weight:500;color:var(--mute);font-size:12px}
+</style>
+</head>
+<body>
+
+<!-- ====== 可編輯區:平台清單與資訊 / Editable config ====== -->
+<script>
+const PROFILE={
+  affil_zh:'國立屏東科技大學 資訊管理系',
+  affil_en:'Dept. of Management Information Systems, NPUST',
+  flow:[
+    {zh:'AI 賦能學習', en:'AI-Empowered Learning'},
+    {zh:'智慧專題創作', en:'Smart Project Creation'},
+    {zh:'學習成效評量', en:'Outcomes Assessment'},
+    {zh:'師生協同回饋', en:'Collaborative Feedback'}
+  ]
+};
+const PLATFORMS=[
+  { zh:'AI 賦能學習平台', en:'AI-Empowered Learning Platform', icon:'🤖',
+    accent:'var(--c-eco)', bg:'var(--bg-eco)',
+    url:'https://pjkuo.github.io/AI-empower-platform/',
+    desc_zh:'學生自學與 AI 輔助入口。以「先思考後驗證」模式,讓學生先自主完成思考與產出,再導入 AI 驗證。',
+    desc_en:'Entry point for self-directed, AI-assisted learning. Under the "think-first, verify-later" model, students complete their own thinking and output before bringing in AI to verify.',
+    tags:['自學 Self-study','AI 輔助 AI-assisted'], hot:true },
+  { zh:'智慧專題創作平台', en:'Smart Project Creation Platform', icon:'🧠',
+    accent:'var(--c-mind)', bg:'var(--bg-mind)',
+    url:'https://pjkuo.github.io/mind_ipo_python2pptx/',
+    desc_zh:'專題系統課程主平台,串接心智圖 → IPO 分析 → Python 編碼 → 應用模擬四步驟工作流。',
+    desc_en:'Main platform for the project-based systems course, linking the four-step workflow: Mind Map → IPO Analysis → Python Coding → Application Simulation.',
+    tags:['心智圖 Mind Map','IPO','Python'] },
+  { zh:'學習成效評量平台', en:'Learning Outcomes Assessment Platform', icon:'📊',
+    accent:'var(--c-ipo)', bg:'var(--bg-ipo)',
+    url:'https://pjkuo.github.io/AICT-assess-platform/',
+    desc_zh:'運算思維與 4C 核心素養前後測評量,純前端即時運算描述統計、信度與配對效果量。',
+    desc_en:'Pre/post-test assessment of computational thinking and 4C core competencies, with client-side real-time descriptive statistics, reliability, and paired effect sizes.',
+    tags:['運算思維 CT','4C','前後測 Pre/Post'] },
+  { zh:'師生協同評量系統', en:'Collaborative Assessment System', icon:'🤝',
+    accent:'var(--c-py)', bg:'var(--bg-py)',
+    url:'https://pjkuo.github.io/AI-empower-system/',
+    desc_zh:'期末專題自評與雙簽核評量系統,支援同學互評與教師控制評分啟閉。',
+    desc_en:'Final-project self-assessment and dual-signoff system, supporting peer review and teacher-controlled scoring windows.',
+    tags:['期末專題 Final','互評 Peer','雙簽核 Dual-signoff'] }
+];
+const CHANNEL_URL='https://www.youtube.com/channel/UCxSRyHQ7kWgGBGqEUjK8dcQ';
+</script>
+
+<nav><div class="wrap">
+  <a class="brand" href="#top"><span class="logo">🎓</span>
+    <span>AI 賦能教學<small class="en">AI-Empowered Teaching</small></span></a>
+  <div class="nav-links">
+    <a href="#platforms">課程平台<small class="en">Platforms</small></a>
+    <a href="#channel">教學頻道<small class="en">Channel</small></a>
+  </div>
+</div></nav>
+
+<main class="wrap" id="top">
+
+  <section class="hero">
+    <div class="hero-tag">AI · EMPOWERED LEARNING</div>
+    <h1>AI 賦能教學平台入口<span class="en">AI-Empowered Teaching · Platform Portal</span></h1>
+    <p class="hero-sub">以 AI 輔助學生自學、專題創作與評量回饋,讓「心智圖 → IPO → Python → 應用模擬」四步驟教學在 AI 協作下加速深化。
+      <span class="en">AI assists students in self-learning, project creation, and assessment feedback, deepening the four-step workflow (Mind Map → IPO → Python → Application Simulation).</span></p>
+    <div class="hero-flow" id="heroFlow"></div>
+  </section>
+
+  <section id="platforms">
+    <div class="sec-head">
+      <span class="bar"></span>
+      <div><h2>課程平台<span class="en">Course Platforms</span></h2>
+        <p>四個獨立部署的教學工具,點選卡片即可前往。Four independently deployed tools — tap a card to open.</p></div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="channel">
+    <div class="sec-head">
+      <span class="bar"></span>
+      <div><h2>課程教學頻道<span class="en">Teaching Channel</span></h2>
+        <p>示範與導引影片,支援學生課後自學。Demo and guidance videos for after-class self-study.</p></div>
+    </div>
+    <a class="yt" id="ytCard" href="#" target="_blank" rel="noopener">
+      <div class="pl">▶</div>
+      <div class="tx"><b>前往 YouTube 教學頻道</b><span class="en">Visit the YouTube Teaching Channel</span>
+        <span>觀看完整課程影音清單 ↗ · View the full playlist ↗</span></div>
+    </a>
+  </section>
+
+</main>
+
+<footer>
+  <div class="affil" id="ftAffil"></div>
+  <div style="margin-top:8px;opacity:.8">純前端單檔運作 · 各平台獨立部署於 GitHub Pages<br>
+    <span class="en">Single-file static site · Each platform independently deployed on GitHub Pages</span></div>
+</footer>
+
+<script>
+/* 流程 / flow */
+document.getElementById('heroFlow').innerHTML=
+  PROFILE.flow.map((f,i)=>`<span class="eco">${f.zh}<small class="en">${f.en}</small></span>${i<PROFILE.flow.length-1?'<span class="arr">→</span>':''}`).join('');
+
+/* 平台卡片 / platform cards */
+document.getElementById('grid').innerHTML=PLATFORMS.map(p=>`
+  <div class="pcard" style="border-top-color:${p.accent}">
+    <div class="ic" style="background:${p.bg};color:${p.accent}">${p.icon}</div>
+    <h3>${p.zh}${p.hot?'<span class="hot-tag">主要入口 Main</span>':''}</h3>
+    <div class="en-name">${p.en}</div>
+    <div class="url">${p.url.replace('https://','')}</div>
+    <div class="desc">${p.desc_zh}<span class="en">${p.desc_en}</span></div>
+    <div class="tags">${p.tags.map(t=>`<span class="tag" style="background:${p.bg};color:${p.accent}">${t}</span>`).join('')}</div>
+    <a class="go" href="${p.url}" target="_blank" rel="noopener" style="background:${p.accent}">前往平台 Open ↗</a>
+  </div>`).join('');
+
+/* YouTube */
+const yt=document.getElementById('ytCard');
+if(CHANNEL_URL){ yt.href=CHANNEL_URL; } else { yt.style.display='none'; }
+
+/* footer */
+document.getElementById('ftAffil').innerHTML=`${PROFILE.affil_zh}<span class="en">${PROFILE.affil_en}</span>`;
+</script>
+</body>
+</html>
