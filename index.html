@@ -12,6 +12,7 @@
   --c-ipo:#7C3AED;  --bg-ipo:#EDE9FE;
   --c-py:#DB2777;   --bg-py:#FCE7F3;
   --c-eco:#0D9488;  --bg-eco:#CCFBF1;
+  --c-tool:#475569; --bg-tool:#E2E8F0;
   --ink:#1F2937; --mute:#6B7280; --line:#E5E7EB; --soft:#F8FAFC;
   --shadow:0 1px 3px rgba(16,24,40,.07),0 8px 24px rgba(16,24,40,.06);
   --shadow-lg:0 12px 36px rgba(16,24,40,.14);
@@ -58,9 +59,13 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
 /* section heading */
 .sec-head{display:flex;align-items:center;gap:11px;margin:34px 0 16px}
 .sec-head .bar{width:5px;height:24px;background:var(--accent);border-radius:3px}
+.sec-head.tool .bar{background:var(--c-tool)}
 .sec-head h2{font-size:21px;color:var(--primary)}
+.sec-head.tool h2{color:var(--c-tool)}
 .sec-head h2 .en{font-size:14px;font-weight:600;color:var(--mute);margin-left:8px}
 .sec-head p{font-size:13px;color:var(--mute);margin-top:2px}
+.sub-label{font-size:15px;color:var(--c-tool);font-weight:800;margin:20px 0 12px;display:flex;align-items:center;gap:8px}
+.sub-label .en{font-size:12px;font-weight:600;color:var(--mute)}
 
 /* platform cards */
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
@@ -80,6 +85,33 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
   color:#fff;font-weight:700;font-size:14px;padding:10px 20px;border-radius:9px;transition:.2s}
 .hot-tag{font-size:10px;font-weight:800;background:linear-gradient(135deg,#F59E0B,#DB2777);
   color:#fff;padding:3px 9px;border-radius:20px;letter-spacing:.3px}
+
+/* own tool cards */
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.tcard{background:#fff;border-radius:13px;box-shadow:var(--shadow);padding:17px 18px;
+  border-left:4px solid var(--c-tool);display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s}
+.tcard:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.tcard .tt{display:flex;align-items:center;gap:9px;margin-bottom:3px}
+.tcard .tt .ti{width:34px;height:34px;border-radius:9px;background:var(--bg-tool);color:var(--c-tool);
+  display:flex;align-items:center;justify-content:center;font-size:17px;flex:0 0 34px}
+.tcard .tt .step{margin-left:auto;font-size:10px;font-weight:800;color:var(--c-tool);background:var(--bg-tool);padding:2px 8px;border-radius:20px}
+.tcard b{font-size:15px;color:var(--primary)}
+.tcard .en-name{font-size:12px;font-weight:600;color:var(--mute);margin:0 0 8px 43px}
+.tcard .path{font-size:11px;color:var(--mute);font-family:"Consolas",monospace;margin:0 0 12px 43px;word-break:break-all}
+.tcard .open{align-self:flex-start;margin-left:43px;font-size:13px;font-weight:700;color:var(--c-tool)}
+.tcard .open:hover{text-decoration:underline}
+
+/* recommended tools */
+.rec-cat{background:#fff;border-radius:13px;box-shadow:var(--shadow);padding:16px 18px;margin-bottom:14px}
+.rec-head{font-size:14.5px;font-weight:800;color:var(--primary);display:flex;align-items:center;gap:9px;margin-bottom:13px}
+.rec-head .ri{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.rec-head .en{font-size:11px;font-weight:600;color:var(--mute)}
+.rec-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(186px,1fr));gap:10px}
+.rec-item{border:1px solid var(--line);border-radius:10px;padding:11px 13px;transition:.18s;display:block}
+.rec-item:hover{border-color:var(--accent);background:var(--soft);transform:translateY(-2px)}
+.rec-item b{font-size:13.5px;color:var(--ink)}
+.rec-item b .ext{color:var(--accent);font-weight:700}
+.rec-item span{font-size:11.5px;color:var(--mute);display:block;margin-top:3px;line-height:1.5}
 
 /* youtube card */
 .yt{background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:0;display:flex;align-items:center;gap:18px;
@@ -107,8 +139,8 @@ const PROFILE={
   flow:[
     {zh:'AI 賦能學習', en:'AI-Empowered Learning'},
     {zh:'智慧專題創作', en:'Smart Project Creation'},
-    {zh:'學習成效評量', en:'Outcomes Assessment'},
-    {zh:'師生協同回饋', en:'Collaborative Feedback'}
+    {zh:'專題智慧生成', en:'Smart Project Generation'},
+    {zh:'學習成效評量', en:'Outcomes Assessment'}
   ]
 };
 const PLATFORMS=[
@@ -124,18 +156,65 @@ const PLATFORMS=[
     desc_zh:'專題系統課程主平台,串接心智圖 → IPO 分析 → Python 編碼 → 應用模擬四步驟工作流。',
     desc_en:'Main platform for the project-based systems course, linking the four-step workflow: Mind Map → IPO Analysis → Python Coding → Application Simulation.',
     tags:['心智圖 Mind Map','IPO','Python'] },
+  { zh:'專題智慧生成系統', en:'Smart Project Generation System', icon:'⚙️',
+    accent:'var(--c-py)', bg:'var(--bg-py)',
+    url:'https://pjkuo.github.io/AI-empower-system/',
+    desc_zh:'以 AI 智慧生成專題系統內容,從心智圖、IPO 模組分析到 Python 程式骨架自動產生,加速專題開發。',
+    desc_en:'AI-powered generation of project system content — automatically producing artifacts from mind maps and IPO module analysis through to Python scaffolding, accelerating project development.',
+    tags:['AI 生成 Generation','專題 Project','自動化 Automation'] },
   { zh:'學習成效評量平台', en:'Learning Outcomes Assessment Platform', icon:'📊',
     accent:'var(--c-ipo)', bg:'var(--bg-ipo)',
     url:'https://pjkuo.github.io/AICT-assess-platform/',
     desc_zh:'運算思維與 4C 核心素養前後測評量,純前端即時運算描述統計、信度與配對效果量。',
     desc_en:'Pre/post-test assessment of computational thinking and 4C core competencies, with client-side real-time descriptive statistics, reliability, and paired effect sizes.',
-    tags:['運算思維 CT','4C','前後測 Pre/Post'] },
-  { zh:'師生協同評量系統', en:'Collaborative Assessment System', icon:'🤝',
-    accent:'var(--c-py)', bg:'var(--bg-py)',
-    url:'https://pjkuo.github.io/AI-empower-system/',
-    desc_zh:'期末專題自評與雙簽核評量系統,支援同學互評與教師控制評分啟閉。',
-    desc_en:'Final-project self-assessment and dual-signoff system, supporting peer review and teacher-controlled scoring windows.',
-    tags:['期末專題 Final','互評 Peer','雙簽核 Dual-signoff'] }
+    tags:['運算思維 CT','4C','前後測 Pre/Post'] }
+];
+/* 課程專屬模組工具(依 心智圖 → IPO → Python 流程排序)/ Course modules (ordered by workflow) */
+const TOOLS=[
+  { zh:'心智圖轉 IPO', en:'Mind Map to IPO', icon:'🗺️', step:'心智圖→IPO',
+    url:'https://pjkuo.github.io/mindmap-to-ipo/' },
+  { zh:'專題系統 IPO 模組分析器', en:'Project System IPO Module Analyzer', icon:'🔍', step:'IPO',
+    url:'https://pjkuo.github.io/IPO_Spliter_tool/' },
+  { zh:'IPO 模組拆解工具', en:'IPO Splitter Tool', icon:'🧩', step:'IPO',
+    url:'https://pjkuo.github.io/IPO_Spliter/' },
+  { zh:'心智圖 → IPO → Python(AI)', en:'Mind Map → IPO → Python (AI)', icon:'🔗', step:'→Python',
+    url:'https://pjkuo.github.io/mind2IPO2python_AI/' }
+];
+/* 推薦工具(依流程階段分類)/ Recommended tools by workflow stage */
+const REC_TOOLS=[
+  { cat_zh:'心智圖', cat_en:'Mind Map', icon:'🧠', accent:'var(--c-mind)', bg:'var(--bg-mind)',
+    items:[
+      {name:'Coggle', url:'https://coggle.it/', desc:'線上協作心智圖,可多人即時共編'},
+      {name:'XMind', url:'https://xmind.app/', desc:'跨平台心智圖軟體,模板豐富'},
+      {name:'Whimsical', url:'https://whimsical.com/', desc:'簡潔的心智圖與流程圖工具'},
+      {name:'Miro', url:'https://miro.com/', desc:'線上白板,適合腦力激盪'}
+    ]},
+  { cat_zh:'IPO / 流程圖', cat_en:'IPO / Flowchart', icon:'🔀', accent:'var(--c-ipo)', bg:'var(--bg-ipo)',
+    items:[
+      {name:'draw.io', url:'https://app.diagrams.net/', desc:'免費繪製 IPO 圖與流程圖'},
+      {name:'Excalidraw', url:'https://excalidraw.com/', desc:'手繪風白板,快速畫草圖'},
+      {name:'Mermaid Live', url:'https://mermaid.live/', desc:'用文字語法產生流程圖'},
+      {name:'Lucidchart', url:'https://www.lucidchart.com/', desc:'專業流程圖與系統架構圖'}
+    ]},
+  { cat_zh:'Python', cat_en:'Python', icon:'🐍', accent:'#0EA5E9', bg:'#E0F2FE',
+    items:[
+      {name:'Google Colab', url:'https://colab.research.google.com/', desc:'雲端 Jupyter,免安裝執行 Python'},
+      {name:'Python Tutor', url:'https://pythontutor.com/', desc:'逐步視覺化程式執行流程'},
+      {name:'Replit', url:'https://replit.com/', desc:'線上 IDE,支援協作'},
+      {name:'Thonny', url:'https://thonny.org/', desc:'初學者友善的 Python IDE'}
+    ]},
+  { cat_zh:'影片', cat_en:'Video', icon:'🎬', accent:'#F59E0B', bg:'#FEF3C7',
+    items:[
+      {name:'CapCut', url:'https://www.capcut.com/', desc:'免費影音剪輯,範本與字幕豐富'},
+      {name:'Clipchamp', url:'https://clipchamp.com/', desc:'瀏覽器內影片編輯'},
+      {name:'DaVinci Resolve', url:'https://www.blackmagicdesign.com/products/davinciresolve', desc:'專業級剪輯與調光'}
+    ]},
+  { cat_zh:'生成式 AI', cat_en:'Generative AI', icon:'✨', accent:'#7C3AED', bg:'#EDE9FE',
+    items:[
+      {name:'Claude', url:'https://claude.ai/', desc:'Anthropic 對話式 AI 助理'},
+      {name:'ChatGPT', url:'https://chatgpt.com/', desc:'OpenAI 對話式 AI 助理'},
+      {name:'Gemini', url:'https://gemini.google.com/', desc:'Google 對話式 AI 助理'}
+    ]}
 ];
 const CHANNEL_URL='https://www.youtube.com/channel/UCxSRyHQ7kWgGBGqEUjK8dcQ';
 </script>
@@ -145,6 +224,7 @@ const CHANNEL_URL='https://www.youtube.com/channel/UCxSRyHQ7kWgGBGqEUjK8dcQ';
     <span>AI 賦能教學<small class="en">AI-Empowered Teaching</small></span></a>
   <div class="nav-links">
     <a href="#platforms">課程平台<small class="en">Platforms</small></a>
+    <a href="#tools">專題工具<small class="en">Tools</small></a>
     <a href="#channel">教學頻道<small class="en">Channel</small></a>
   </div>
 </div></nav>
@@ -166,6 +246,20 @@ const CHANNEL_URL='https://www.youtube.com/channel/UCxSRyHQ7kWgGBGqEUjK8dcQ';
         <p>四個獨立部署的教學工具,點選卡片即可前往。Four independently deployed tools — tap a card to open.</p></div>
     </div>
     <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="tools">
+    <div class="sec-head tool">
+      <span class="bar"></span>
+      <div><h2>專題工具<span class="en">Project Tools</span></h2>
+        <p>依「心智圖 → IPO → Python」流程,提供課程專屬模組與推薦工具。Course modules and recommended tools, ordered by the Mind Map → IPO → Python workflow.</p></div>
+    </div>
+
+    <h3 class="sub-label">課程專屬模組<span class="en">Course Modules</span></h3>
+    <div class="tools-grid" id="toolsGrid"></div>
+
+    <h3 class="sub-label">推薦工具<span class="en">Recommended Tools</span></h3>
+    <div id="recTools"></div>
   </section>
 
   <section id="channel">
@@ -204,6 +298,24 @@ document.getElementById('grid').innerHTML=PLATFORMS.map(p=>`
     <div class="desc">${p.desc_zh}<span class="en">${p.desc_en}</span></div>
     <div class="tags">${p.tags.map(t=>`<span class="tag" style="background:${p.bg};color:${p.accent}">${t}</span>`).join('')}</div>
     <a class="go" href="${p.url}" target="_blank" rel="noopener" style="background:${p.accent}">前往平台 Open ↗</a>
+  </div>`).join('');
+
+/* 課程專屬模組 / own tool cards */
+document.getElementById('toolsGrid').innerHTML=TOOLS.map(t=>`
+  <div class="tcard">
+    <div class="tt"><span class="ti">${t.icon}</span><b>${t.zh}</b><span class="step">${t.step}</span></div>
+    <div class="en-name">${t.en}</div>
+    <div class="path">${t.url.replace('https://','')}</div>
+    <a class="open" href="${t.url}" target="_blank" rel="noopener">開啟工具 Open ↗</a>
+  </div>`).join('');
+
+/* 推薦工具 / recommended tools */
+document.getElementById('recTools').innerHTML=REC_TOOLS.map(c=>`
+  <div class="rec-cat">
+    <div class="rec-head"><span class="ri" style="background:${c.bg};color:${c.accent}">${c.icon}</span>${c.cat_zh}<span class="en">${c.cat_en}</span></div>
+    <div class="rec-items">${c.items.map(it=>`
+      <a class="rec-item" href="${it.url}" target="_blank" rel="noopener"><b>${it.name} <span class="ext">↗</span></b><span>${it.desc}</span></a>`).join('')}
+    </div>
   </div>`).join('');
 
 /* YouTube */
