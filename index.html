@@ -127,6 +127,45 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
 footer{text-align:center;color:var(--mute);font-size:12.5px;padding:34px 22px 40px;line-height:1.9}
 footer .affil{color:var(--ink);font-weight:700}
 footer .affil .en{display:block;font-weight:500;color:var(--mute);font-size:12px}
+
+/* practice videos */
+.sec-head.video .bar{background:#DC2626}
+.sec-head.video h2{color:#B91C1C}
+.vid-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(216px,1fr));gap:16px}
+.vcard{background:#fff;border-radius:14px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s;border-top:4px solid var(--accent)}
+.vcard:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+.vthumb{height:98px;display:flex;align-items:center;justify-content:center;color:#fff;position:relative}
+.vthumb .play{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.94);color:#111;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.25);transition:.2s}
+.vcard:hover .vthumb .play{transform:scale(1.12)}
+.vthumb .stp{position:absolute;left:11px;top:10px;font-size:11px;font-weight:800;background:rgba(0,0,0,.28);padding:3px 9px;border-radius:20px;letter-spacing:.3px}
+.vthumb .dur{position:absolute;right:11px;bottom:9px;font-size:10.5px;font-weight:700;background:rgba(0,0,0,.4);padding:2px 7px;border-radius:6px}
+.vbody{padding:13px 16px 16px;display:flex;flex-direction:column;flex:1}
+.vbody b{font-size:15.5px;color:var(--primary)}
+.vbody .en-name{font-size:11.5px;color:var(--mute);font-weight:600;margin:1px 0 8px}
+.vbody .vd{font-size:12.5px;color:var(--ink);line-height:1.65;flex:1}
+.vbody .vgo{margin-top:13px;align-self:flex-start;display:inline-flex;align-items:center;gap:6px;color:#fff;font-weight:700;font-size:13px;padding:8px 16px;border-radius:9px}
+.vfull{grid-column:1/-1;background:linear-gradient(135deg,var(--primary),#3457C5);color:#fff;border-radius:14px;padding:17px 22px;display:flex;align-items:center;gap:15px;box-shadow:var(--shadow);flex-wrap:wrap}
+.vfull .pl{width:48px;height:48px;border-radius:13px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:23px;flex:0 0 48px}
+.vfull .ft{flex:1;min-width:200px}
+.vfull .ft b{font-size:16px;display:block}.vfull .ft span{font-size:12.5px;opacity:.9}
+.vfull a{background:#fff;color:var(--primary);font-weight:800;padding:10px 20px;border-radius:9px;font-size:13.5px;white-space:nowrap}
+.vfull a:hover{background:#EEF2FF}
+.vnote{font-size:12px;color:var(--mute);margin-top:12px;line-height:1.6;background:#fff;border-radius:10px;padding:11px 14px;box-shadow:var(--shadow)}
+.vnote b{color:var(--primary)}
+.vcard{cursor:pointer}
+.vcard.playing{outline:3px solid var(--accent);outline-offset:2px}
+.vid-player{margin-top:18px;background:#0b1220;border-radius:16px;overflow:hidden;box-shadow:var(--shadow-lg);border:1px solid #1f2b3d;animation:vpIn .25s ease}
+@keyframes vpIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.vp-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:linear-gradient(90deg,#1a1030,#2d1b4e);color:#fff}
+.vp-title{font-weight:800;font-size:14px;display:flex;align-items:center;gap:8px}
+.vp-title .pill{font-size:11px;font-weight:800;background:rgba(255,255,255,.16);padding:2px 9px;border-radius:20px}
+.vp-open{margin-left:auto;font-size:12px;font-weight:700;color:#c4b5fd;border:1px solid rgba(196,181,253,.4);padding:5px 11px;border-radius:8px}
+.vp-open:hover{background:rgba(196,181,253,.15)}
+.vp-close{font-family:inherit;font-size:12px;font-weight:700;color:#fff;background:rgba(255,255,255,.14);border:none;padding:6px 12px;border-radius:8px;cursor:pointer}
+.vp-close:hover{background:rgba(255,255,255,.26)}
+.vp-frame{width:100%;aspect-ratio:16/11.6;background:#070b12}
+.vp-frame iframe{width:100%;height:100%;border:0;display:block}
+@media(max-width:560px){.vp-frame{aspect-ratio:16/15}}
 </style>
 </head>
 <body>
@@ -217,6 +256,23 @@ const REC_TOOLS=[
     ]}
 ];
 const CHANNEL_URL='https://www.youtube.com/channel/UCxSRyHQ7kWgGBGqEUjK8dcQ';
+
+/* 實作練習影片(五站)/ Hands-on practice videos
+   video 欄位:預設指向本地深連結 practice-videos.html?s=N;
+   日後可直接替換成 YouTube 連結(外部連結附掛),例如 'https://youtu.be/xxxx' */
+const PRACTICE_FILE='practice-videos.html';
+const PRACTICE=[
+  { s:1, n:'①', icon:'🧠', zh:'心智圖編輯', en:'Mind Map · Decompose', accent:'var(--c-mind)',
+    desc:'用輸入／處理／輸出三條分支拆解問題，並視覺化成樹狀心智圖。', video:'' },
+  { s:2, n:'②', icon:'📊', zh:'IPO 結構表', en:'IPO Structure Table', accent:'var(--c-ipo)',
+    desc:'把心智圖整理成嚴謹的「輸入—處理—輸出」對應表，並用 AI 邏輯審查。', video:'' },
+  { s:3, n:'③', icon:'🐍', zh:'Python 程式碼', en:'Python Code', accent:'var(--c-py)',
+    desc:'依 IPO 自動生成程式骨架，讀懂、修改並用 AI 找 Bug。', video:'' },
+  { s:4, n:'④', icon:'📑', zh:'PPT 簡報', en:'PPT Slides', accent:'var(--accent)',
+    desc:'一鍵彙整三步成果為專題簡報，並用 AI 評分、翻譯與規格檢查。', video:'' },
+  { s:5, n:'⑤', icon:'🎬', zh:'影音腳本', en:'Video Script', accent:'#DC2626',
+    desc:'把簡報延伸成影片腳本、旁白逐字稿與字幕，並生成 QR 碼。', video:'' }
+];
 </script>
 
 <nav><div class="wrap">
@@ -225,6 +281,7 @@ const CHANNEL_URL='https://www.youtube.com/channel/UCxSRyHQ7kWgGBGqEUjK8dcQ';
   <div class="nav-links">
     <a href="#platforms">課程平台<small class="en">Platforms</small></a>
     <a href="#tools">專題工具<small class="en">Tools</small></a>
+    <a href="#practice">實作影片<small class="en">Practice</small></a>
     <a href="#channel">教學頻道<small class="en">Channel</small></a>
   </div>
 </div></nav>
@@ -260,6 +317,24 @@ const CHANNEL_URL='https://www.youtube.com/channel/UCxSRyHQ7kWgGBGqEUjK8dcQ';
 
     <h3 class="sub-label">推薦工具<span class="en">Recommended Tools</span></h3>
     <div id="recTools"></div>
+  </section>
+
+  <section id="practice">
+    <div class="sec-head video">
+      <span class="bar"></span>
+      <div><h2>實作練習影片教學<span class="en">Hands-on Practice Videos</span></h2>
+        <p>五站逐步示範操作，附旁白語音、字幕與輕音樂，點卡片即可觀看對應實作影片。Step-by-step station demos with narration, subtitles, and music.</p></div>
+    </div>
+    <div class="vid-grid" id="vidGrid"></div>
+    <div class="vid-player" id="vidPlayer" hidden>
+      <div class="vp-bar">
+        <span class="vp-title"><span class="pill" id="vpPill">第 1 站</span><span id="vpName">實作影片</span></span>
+        <a class="vp-open" id="vpOpen" target="_blank" rel="noopener">↗ 開新分頁</a>
+        <button class="vp-close" id="vpClose">✕ 收合</button>
+      </div>
+      <div class="vp-frame"><iframe id="vpFrame" title="實作練習影片" allow="autoplay; fullscreen" loading="lazy"></iframe></div>
+    </div>
+    <div class="vnote" id="vidNote"></div>
   </section>
 
   <section id="channel">
@@ -324,6 +399,63 @@ if(CHANNEL_URL){ yt.href=CHANNEL_URL; } else { yt.style.display='none'; }
 
 /* footer */
 document.getElementById('ftAffil').innerHTML=`${PROFILE.affil_zh}<span class="en">${PROFILE.affil_en}</span>`;
+/* 實作練習影片 / practice videos — 卡片點擊即在頁內 iframe 展開播放 */
+(function(){
+  const grid=document.getElementById('vidGrid');
+  const panel=document.getElementById('vidPlayer');
+  const frame=document.getElementById('vpFrame');
+  const elName=document.getElementById('vpName');
+  const elPill=document.getElementById('vpPill');
+  const elOpen=document.getElementById('vpOpen');
+
+  function ytEmbed(u){const m=u.match(/youtu\.be\/([\w-]{6,})/)||u.match(/[?&]v=([\w-]{6,})/)||u.match(/youtube\.com\/embed\/([\w-]{6,})/);return m?('https://www.youtube.com/embed/'+m[1]+'?rel=0'):u;}
+  function srcFor(v){ // v:{s,video} or 'full'
+    if(v==='full') return PRACTICE_FILE+'?embed=1';
+    if(v.video&&v.video.trim()){const u=v.video.trim();return /youtu/.test(u)?ytEmbed(u):u;}
+    return PRACTICE_FILE+'?s='+v.s+'&embed=1';
+  }
+  function openTab(v){ if(v==='full')return PRACTICE_FILE; if(v.video&&v.video.trim())return v.video.trim(); return PRACTICE_FILE+'?s='+v.s; }
+
+  grid.innerHTML=
+    PRACTICE.map(v=>`
+    <div class="vcard" data-s="${v.s}" style="border-top-color:${v.accent}" role="button" tabindex="0" aria-label="觀看第 ${v.s} 站實作影片">
+      <div class="vthumb" style="background:${v.accent}">
+        <span class="stp">第 ${v.s} 站 ${v.n}</span><span class="play">▶</span><span class="dur">示範操作</span>
+      </div>
+      <div class="vbody">
+        <b>${v.icon} ${v.zh}</b><div class="en-name">${v.en}</div>
+        <div class="vd">${v.desc}</div>
+        <span class="vgo" style="background:${v.accent}">▶ 觀看實作影片 Watch</span>
+      </div>
+    </div>`).join('')
+    + `<div class="vfull" data-full="1">
+        <div class="pl">▶</div>
+        <div class="ft"><b>完整五站連續播放 Full Walkthrough</b>
+          <span>心智圖 → IPO → Python → PPT → 影音腳本，每站結束可暫停、再續播下一站。</span></div>
+        <a href="#" class="vfull-btn">▶ 完整版 Full</a>
+      </div>`;
+
+  function play(target){
+    const v=(target==='full')?'full':PRACTICE.find(x=>x.s===target);
+    frame.src=srcFor(v);
+    elOpen.href=openTab(v);
+    if(v==='full'){elPill.textContent='完整版';elName.textContent='五站連續播放';}
+    else{elPill.textContent='第 '+v.s+' 站';elName.textContent=v.icon+' '+v.zh;}
+    panel.hidden=false;
+    [...grid.querySelectorAll('.vcard')].forEach(c=>c.classList.toggle('playing',target!=='full'&&+c.dataset.s===target));
+    panel.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  function close(){frame.src='';panel.hidden=true;[...grid.querySelectorAll('.vcard')].forEach(c=>c.classList.remove('playing'));}
+
+  grid.addEventListener('click',e=>{
+    const full=e.target.closest('.vfull'); if(full){e.preventDefault();play('full');return;}
+    const card=e.target.closest('.vcard'); if(card)play(+card.dataset.s);
+  });
+  grid.addEventListener('keydown',e=>{const card=e.target.closest('.vcard');if(card&&(e.key==='Enter'||e.key===' ')){e.preventDefault();play(+card.dataset.s);}});
+  document.getElementById('vpClose').onclick=close;
+
+  document.getElementById('vidNote').innerHTML=
+    `<b>給老師：</b>影片以單一 HTML 檔運作，與本頁放在同一資料夾即可（<code>${PRACTICE_FILE}</code>），卡片便會在頁面內展開播放。`
+    +`若已將影片上傳 YouTube，把 <code>PRACTICE</code> 陣列中各站的 <code>video</code> 欄位填上 YouTube 連結，內嵌播放器會自動改播該外部影片。`;
+})();
 </script>
-</body>
-</html>
