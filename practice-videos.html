@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 賦能學習平台 — 實作練習影片</title>
+<style>
+  :root{
+    --bg:#0f1722; --bg2:#1e293b; --bg3:#2d1b4e; --panel:#131c2b; --line:#1f2b3d;
+    --text:#e2e8f0; --muted:#94a3b8; --dim:#64748b;
+    --accent:#a855f7; --accent2:#3b82f6; --accent3:#ec4899;
+    --ok:#22c55e; --warn:#f59e0b; --err:#ef4444; --teal:#2dd4bf; --gold:#f59e0b;
+    --shadow:0 10px 30px rgba(0,0,0,.45);
+    --font:"Microsoft JhengHei","PingFang TC","Noto Sans TC","Segoe UI",system-ui,sans-serif;
+    --mono:"Cascadia Code",Consolas,"JetBrains Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:transparent;font-family:var(--font);color:var(--text)}
+  .wrap{max-width:1000px;margin:0 auto;padding:14px}
+  .player{position:relative;border-radius:16px;overflow:hidden;background:#070b12;box-shadow:var(--shadow);border:1px solid var(--line)}
+
+  .topbar{display:flex;align-items:center;gap:9px;padding:10px 16px;background:linear-gradient(90deg,#1a1030,#2d1b4e 60%,#1e293b);color:#fff}
+  .dot{width:11px;height:11px;border-radius:50%}
+  .rec{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;background:rgba(255,255,255,.12);padding:3px 9px;border-radius:20px;margin-left:6px}
+  .rec .blink{width:8px;height:8px;border-radius:50%;background:var(--err);animation:blink 1.1s infinite}
+  @keyframes blink{50%{opacity:.25}}
+  .ttl{font-weight:700;font-size:15px}
+  .stationtag{margin-left:auto;font-size:12px;background:var(--accent);padding:4px 11px;border-radius:20px;font-weight:700;transition:.3s}
+
+  .stage{position:relative;aspect-ratio:16/9;background:var(--bg);overflow:hidden;min-height:340px}
+  .app{position:absolute;inset:0;display:grid;grid-template-columns:31% 1fr}
+  .side{background:var(--panel);border-right:1px solid var(--line);padding:12px 11px;overflow:hidden}
+  .steps{list-style:none;margin:0;padding:0}
+  .steps li{display:flex;align-items:flex-start;gap:8px;padding:7px 8px;border-radius:9px;margin-bottom:3px;transition:.3s}
+  .steps li .ic{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;background:#0a1220;font-size:13px;flex:0 0 24px;transition:.3s;color:var(--muted)}
+  .steps li .nm{font-size:12.5px;color:var(--muted);font-weight:700;line-height:1.25}
+  .steps li .nm small{display:block;font-size:9.5px;font-weight:500;color:var(--dim);margin-top:1px}
+  .steps li.active{background:rgba(168,85,247,.13)}
+  .steps li.active .ic{background:var(--accent);color:#fff}
+  .steps li.active .nm{color:#fff}
+  .steps li.done .ic{background:var(--ok);color:#fff}
+  .steps li .chk{margin-left:auto;color:var(--ok);font-weight:800;opacity:0;font-size:13px;transition:.3s}
+  .steps li.done .chk{opacity:1}
+  .sidehint{margin-top:12px;font-size:10.5px;color:var(--muted);line-height:1.6;background:#0a1220;border:1px solid var(--line);border-radius:9px;padding:9px}
+  .sidehint b{color:var(--accent3)}
+
+  .work{position:relative;padding:13px 15px;overflow:hidden}
+  .scene{display:none}.scene.active{display:block}
+  .wtop{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .wtitle{font-weight:800;font-size:15px;color:#fff}
+  .watch{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--accent2);border:1px solid rgba(59,130,246,.5);background:rgba(59,130,246,.12);border-radius:20px;padding:4px 10px}
+  .flabel{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;display:block}
+  .inp{border:1.5px solid var(--line);border-radius:9px;padding:8px 11px;font-size:13px;background:#0a1220;min-height:20px;color:var(--text)}
+  .inp.cursor::after{content:"▏";color:var(--accent);animation:cb .8s steps(1) infinite}
+  @keyframes cb{50%{opacity:0}}
+  .btnrow{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+  .b{font-family:inherit;font-size:11.5px;font-weight:700;border-radius:9px;padding:7px 11px;border:1px solid var(--line);background:#0f1a2a;color:#cbd5e1;transition:transform .15s,box-shadow .2s}
+  .b.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-color:transparent}
+  .b.ai{background:rgba(45,212,191,.12);color:var(--teal);border-color:rgba(45,212,191,.4)}
+  .b.press{transform:scale(.94);box-shadow:0 0 0 4px rgba(168,85,247,.3)}
+  .sel{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:9px;padding:7px 11px;font-size:12px;font-weight:600;background:#0a1220;color:#cbd5e1}
+  .sel b{color:var(--accent)}
+
+  .prob{text-align:center;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--bg3),#3b2766);border:1px solid rgba(168,85,247,.4);border-radius:12px;padding:11px;font-size:14px;min-height:20px}
+  .branches{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:11px}
+  .br{border:1.5px solid var(--line);border-radius:11px;overflow:hidden;background:var(--panel);min-height:116px;display:flex;flex-direction:column}
+  .br h4{margin:0;padding:7px 9px;font-size:11.5px;font-weight:800;color:#fff}
+  .br.in h4{background:var(--accent2)}.br.pr h4{background:#0d9488}.br.ou h4{background:var(--accent3)}
+  .br ul{list-style:none;margin:0;padding:7px 8px;display:flex;flex-direction:column;gap:5px;flex:1}
+  li.item{font-size:11.5px;background:#0a1220;border:1px solid var(--line);border-radius:7px;padding:5px 7px;opacity:0;transform:translateY(6px);transition:.35s;color:#cbd5e1}
+  li.item.show{opacity:1;transform:none}
+  .tree{position:absolute;inset:0;background:rgba(15,23,34,.97);display:grid;place-items:center;opacity:0;pointer-events:none;transition:.4s;z-index:5}
+  .tree.show{opacity:1}
+  .tree svg{width:88%;height:80%}
+  .tree path,.tree line{stroke:var(--accent);stroke-width:2;fill:none;stroke-dasharray:200;stroke-dashoffset:200;animation:draw .9s forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+
+  table.ipo{width:100%;border-collapse:collapse;font-size:12px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  table.ipo th{background:#0d9488;color:#fff;padding:8px;font-weight:800;text-align:left;font-size:11.5px}
+  table.ipo td{border-top:1px solid var(--line);padding:7px 9px;color:#cbd5e1;vertical-align:top;background:var(--panel)}
+  table.ipo tr.row{opacity:0;transition:.4s}table.ipo tr.row.show{opacity:1}
+
+  .codebox{margin-top:10px;background:#0a0f1c;border:1px solid var(--line);border-radius:11px;padding:12px 14px;font-family:var(--mono);font-size:11.5px;color:#e2e8f0;line-height:1.65;min-height:116px;white-space:pre-wrap;overflow:hidden}
+  .codebox .kw{color:#c084fc}.codebox .fn{color:#60a5fa}.codebox .st{color:#86efac}.codebox .cm{color:#64748b}
+  .tabs{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+  .tab{font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px 8px 0 0;background:#0f1a2a;color:var(--muted);border:1px solid var(--line);border-bottom:none}
+  .tab.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+  .slides{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+  .slide{aspect-ratio:16/10;border:1.5px solid var(--line);border-radius:8px;background:var(--panel);padding:7px;font-size:9px;color:#cbd5e1;opacity:0;transform:scale(.92);transition:.35s;display:flex;flex-direction:column;gap:4px}
+  .slide.show{opacity:1;transform:none}
+  .slide .sh{height:5px;width:60%;background:var(--accent);border-radius:3px}
+  .slide .sl{height:3px;width:90%;background:#23344a;border-radius:3px}
+  .slide b{font-size:9px;color:#fff}
+
+  .vtabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .vtab{font-size:11px;font-weight:700;padding:6px 10px;border-radius:9px;background:rgba(236,72,153,.1);color:var(--accent3);border:1px solid rgba(236,72,153,.4);opacity:.5;transition:.3s}
+  .vtab.on{opacity:1;background:var(--accent3);color:#fff;border-color:var(--accent3)}
+  .vprev{margin-top:9px;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font-size:11.5px;color:#cbd5e1;line-height:1.6;background:var(--panel);min-height:58px}
+  .qr{margin-top:9px;display:grid;grid-template-columns:repeat(11,1fr);gap:2px;width:104px;opacity:0;transition:.4s}
+  .qr.show{opacity:1}
+  .qr i{aspect-ratio:1;background:#e2e8f0;border-radius:1px}
+  .qr i.o{background:transparent}
+
+  #spot{position:absolute;border:2.5px solid var(--err);border-radius:10px;opacity:0;transition:all .45s cubic-bezier(.4,0,.2,1);pointer-events:none;z-index:8}
+  #spot.pulse{animation:pls 1.6s ease-in-out infinite}
+  @keyframes pls{50%{box-shadow:0 0 0 5px rgba(239,68,68,.22)}}
+  #badge{position:absolute;min-width:28px;height:28px;padding:0 5px;border-radius:50%;background:var(--err);color:#fff;font-size:16px;font-weight:800;display:grid;place-items:center;opacity:0;transition:all .45s cubic-bezier(.4,0,.2,1);z-index:9;box-shadow:0 4px 12px rgba(239,68,68,.55)}
+
+  .toast{position:absolute;right:16px;top:44px;max-width:215px;background:#020617;border:1px solid var(--line);color:#fff;border-radius:10px;padding:9px 11px;font-size:11px;line-height:1.5;box-shadow:var(--shadow);opacity:0;transform:translateY(-6px);transition:.3s;z-index:6}
+  .toast.show{opacity:1;transform:none}.toast b{color:var(--teal)}
+
+  .card{position:absolute;inset:0;background:linear-gradient(135deg,#160f2e,#2d1b4e 55%,#1e293b);color:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:10px;z-index:12;opacity:0;pointer-events:none;transition:.5s;padding:24px}
+  .card.show{opacity:1}
+  .card .eyebrow{font-size:13px;letter-spacing:3px;color:var(--accent);font-weight:700}
+  .card h1{margin:0;font-size:clamp(22px,4vw,34px);line-height:1.25}
+  .card p{margin:0;font-size:14px;opacity:.92;max-width:580px;line-height:1.6;color:#cbd5e1}
+
+  .gate{position:absolute;inset:0;background:rgba(3,7,15,.86);backdrop-filter:blur(3px);z-index:15;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.4s;padding:20px}
+  .gate.show{opacity:1;pointer-events:auto}
+  .gatecard{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:26px 30px;text-align:center;max-width:440px;box-shadow:var(--shadow)}
+  .gicon{width:56px;height:56px;border-radius:50%;background:var(--ok);color:#fff;font-size:30px;display:grid;place-items:center;margin:0 auto 12px;font-weight:800}
+  .geyebrow{font-size:12px;letter-spacing:2px;color:var(--ok);font-weight:800}
+  .gatecard h3{margin:6px 0 4px;font-size:21px;color:#fff}
+  .gatecard p{margin:0 0 16px;font-size:13px;color:var(--muted);line-height:1.6}
+  .gbtn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;font-family:inherit;font-size:16px;font-weight:800;padding:12px 26px;border-radius:28px;cursor:pointer;box-shadow:0 8px 20px rgba(168,85,247,.45);transition:transform .15s}
+  .gbtn:hover{transform:translateY(-2px)}
+  .gatecard small{display:block;margin-top:10px;font-size:11px;color:var(--dim)}
+
+  .start{position:absolute;inset:0;background:linear-gradient(135deg,#0a0f1c,#2d1b4e);z-index:20;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:13px;color:#fff;text-align:center;padding:24px}
+  .start .eyebrow{font-size:12px;letter-spacing:3px;color:var(--accent);font-weight:700}
+  .start h2{margin:0;font-size:clamp(20px,4vw,30px)}
+  .start .meta{font-size:12.5px;color:var(--muted);line-height:1.7}
+  .chips{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-top:2px}
+  .chips span{font-size:11px;background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:20px;padding:4px 11px;font-weight:600;color:#cbd5e1;transition:.3s}
+  .chips span.hl{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .playbtn{margin-top:8px;display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;font-family:inherit;font-size:16px;font-weight:800;padding:13px 28px;border-radius:30px;cursor:pointer;box-shadow:0 8px 22px rgba(168,85,247,.5);transition:transform .15s}
+  .playbtn:hover{transform:translateY(-2px)}
+  .start small{font-size:11px;color:var(--dim)}
+
+  .subzone{min-height:30px;background:#070b12;display:flex;align-items:center;justify-content:center;padding:9px 18px}
+  .sub{color:#fff;font-size:14.5px;font-weight:600;text-align:center;line-height:1.5;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+
+  .ctrl{display:flex;align-items:center;gap:10px;padding:11px 14px;background:#0a0f17;border-top:1px solid var(--line);flex-wrap:wrap}
+  .ctrl button{background:none;border:none;color:#cbd5e1;font-size:17px;cursor:pointer;font-family:inherit;display:grid;place-items:center;width:34px;height:34px;border-radius:8px;transition:.2s}
+  .ctrl button:hover{background:#1f2b3d;color:#fff}
+  .ctrl button.on{color:var(--accent)}
+  .ctrl .srt{width:auto;padding:0 11px;font-size:12px;font-weight:700;gap:5px}
+  .bar{flex:1;min-width:120px;height:8px;background:#1f2b3d;border-radius:6px;overflow:hidden;display:flex;gap:2px;padding:1px}
+  .bar i{flex:1;background:#070b12;border-radius:4px;position:relative;overflow:hidden}
+  .bar i .f{position:absolute;inset:0;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s}
+  .time{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;min-width:96px;text-align:right}
+
+  .cap{max-width:1000px;margin:10px auto 0;font-size:12px;color:#94a3b8;line-height:1.6;padding:0 6px}
+  .cap code{background:rgba(168,85,247,.15);color:#c4b5fd;padding:1px 5px;border-radius:5px;font-size:11px}
+  @media(max-width:580px){.stationtag{display:none}.b{font-size:10.5px;padding:6px 8px}.sub{font-size:12.5px}.time{min-width:70px;font-size:11px}.steps li .nm small{display:none}}
+  /* embedded in iframe (no outer chrome) */
+  html.embed,html.embed body{background:#070b12}
+  html.embed .wrap{max-width:none;padding:0;margin:0}
+  html.embed .player{border-radius:0;border:0;box-shadow:none}
+  html.embed .cap{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="player" id="player">
+    <div class="topbar">
+      <span class="dot" style="background:#ef4444"></span><span class="dot" style="background:#f59e0b"></span><span class="dot" style="background:#22c55e"></span>
+      <span class="rec"><span class="blink"></span>實作練習</span>
+      <span class="ttl">AI 賦能學習平台 · 操作示範</span>
+      <span class="stationtag" id="tag">第一站 · 心智圖編輯</span>
+    </div>
+
+    <div class="stage" id="stage">
+      <div class="app">
+        <aside class="side">
+          <ul class="steps">
+            <li id="st0"><span class="ic">🧠</span><span class="nm">① 心智圖編輯<small>拆解問題 · 樹狀視覺化</small></span><span class="chk">✓</span></li>
+            <li id="st1"><span class="ic">📊</span><span class="nm">② IPO 結構表<small>轉換為三模組表格</small></span><span class="chk">✓</span></li>
+            <li id="st2"><span class="ic">🐍</span><span class="nm">③ Python 程式碼<small>框架生成 + AI 優化</small></span><span class="chk">✓</span></li>
+            <li id="st3"><span class="ic">📑</span><span class="nm">④ PPT 簡報<small>彙整三步生成 PPTX</small></span><span class="chk">✓</span></li>
+            <li id="st4"><span class="ic">🎬</span><span class="nm">⑤ 影音腳本<small>起承轉合 + 旁白 + 字幕</small></span><span class="chk">✓</span></li>
+          </ul>
+          <div class="sidehint"><b>先思考、後驗證</b><br>先自己想、自己做，再用 AI 檢查與精煉。人為主、AI 為輔。</div>
+        </aside>
+
+        <section class="work" id="work">
+          <!-- Scene 1 -->
+          <div class="scene" id="sc0">
+            <div class="wtop"><span class="wtitle">第一站 · 心智圖編輯</span><span class="watch">📖 觀看此模組教學影片</span></div>
+            <span class="flabel">要解決的問題</span>
+            <div class="prob" id="s1prob">（先寫下你要解決的問題）</div>
+            <div class="branches">
+              <div class="br in"><h4>分支一 · 輸入</h4><ul id="s1in"></ul></div>
+              <div class="br pr"><h4>分支二 · 處理</h4><ul id="s1pr"></ul></div>
+              <div class="br ou"><h4>分支三 · 輸出</h4><ul id="s1ou"></ul></div>
+            </div>
+            <div class="btnrow">
+              <button class="b" id="s1tree">🌳 樹狀視覺化</button>
+              <button class="b" id="s1mer">🧠 Mermaid 心智圖</button>
+              <button class="b primary" id="s1save">💾 儲存並進入下一步 →</button>
+            </div>
+            <div class="tree" id="s1treebox"><svg viewBox="0 0 600 280" id="s1svg"></svg></div>
+          </div>
+
+          <!-- Scene 2 -->
+          <div class="scene" id="sc1">
+            <div class="wtop"><span class="wtitle">第二站 · IPO 結構表</span><span class="watch">📖 觀看此模組教學影片</span></div>
+            <table class="ipo"><thead><tr><th>INPUT 輸入</th><th>→ PROCESS 處理</th><th>→ OUTPUT 輸出</th></tr></thead><tbody id="s2body"></tbody></table>
+            <div class="btnrow">
+              <button class="b" id="s2add">＋ 新增 PROCESS</button>
+              <button class="b ai" id="s2rev">🔍 AI 邏輯審查</button>
+              <button class="b" id="s2md">📋 複製 Markdown</button>
+              <button class="b" id="s2dl">⬇ .xlsx / .pdf / .docx</button>
+              <button class="b primary" id="s2save">💾 儲存並進入下一步 →</button>
+            </div>
+            <div class="toast" id="s2toast"></div>
+          </div>
+
+          <!-- Scene 3 -->
+          <div class="scene" id="sc2">
+            <div class="wtop"><span class="wtitle">第三站 · Python 程式碼</span><span class="watch">📖 觀看此模組教學影片</span></div>
+            <div class="btnrow" style="margin-top:0">
+              <span class="sel" id="s3method">生成方式：<b>📐 離線模板</b></span>
+              <span class="sel" id="s3lang">程式語言：<b>Python</b></span>
+            </div>
+            <div style="margin-top:9px"><span class="flabel">額外提示（選填）</span><div class="inp" id="s3hint"></div></div>
+            <div class="tabs"><span class="tab on">完整程式碼</span><span class="tab">INPUT</span><span class="tab">PROCESS</span><span class="tab">OUTPUT</span></div>
+            <div class="codebox" id="s3code"><span class="cm"># 按「🚀 生成程式碼」後，這裡會出現程式骨架…</span></div>
+            <div class="btnrow">
+              <button class="b primary" id="s3gen">🚀 生成程式碼</button>
+              <button class="b ai" id="s3bug">🐛 AI 找 Bug</button>
+              <button class="b" id="s3save">💾 儲存並進入下一步 →</button>
+            </div>
+          </div>
+
+          <!-- Scene 4 -->
+          <div class="scene" id="sc3">
+            <div class="wtop"><span class="wtitle">第四站 · PPT 簡報</span><span class="watch">📖 觀看此模組教學影片</span></div>
+            <div class="btnrow" style="margin-top:0">
+              <span class="sel">佈景：<b>學術藍</b></span><span class="sel">語言：<b>繁中</b></span><span class="sel">作者：<b>NPUST</b></span>
+            </div>
+            <div class="slides" id="s4slides"></div>
+            <div class="btnrow">
+              <button class="b" id="s4ref">🔄 重新整理大綱</button>
+              <button class="b primary" id="s4gen">📊 生成並下載 PPTX</button>
+              <button class="b ai" id="s4score">⭐ AI 簡報評分</button>
+              <button class="b" id="s4tr">🌐 多語言翻譯</button>
+              <button class="b" id="s4spec">📋 規格合規檢查</button>
+            </div>
+            <div class="toast" id="s4toast"></div>
+          </div>
+
+          <!-- Scene 5 -->
+          <div class="scene" id="sc4">
+            <div class="wtop"><span class="wtitle">第五站 · 影音腳本與旁白</span><span class="watch">📖 觀看此模組教學影片</span></div>
+            <div class="btnrow" style="margin-top:0"><button class="b primary" id="s5gen">🎬 生成影音腳本（需 AI）</button></div>
+            <div class="vtabs"><span class="vtab" id="v0">🎬 影片腳本</span><span class="vtab" id="v1">🎙 旁白逐字稿</span><span class="vtab" id="v2">🎥 AI 影片提示</span><span class="vtab" id="v3">📝 字幕檔</span></div>
+            <div class="vprev" id="s5prev">尚未生成。按上方「生成影音腳本」開始。</div>
+            <div class="btnrow">
+              <button class="b" id="s5srt">⬇ 下載 .srt / .vtt</button>
+              <button class="b ai" id="s5tts">🔊 TTS 朗讀旁白</button>
+              <button class="b" id="s5qr">📱 生成 QR 碼</button>
+            </div>
+            <div class="qr" id="s5qrbox"></div>
+          </div>
+        </section>
+      </div>
+
+      <div id="spot"></div><div id="badge">❶</div>
+      <div class="card" id="titlecard"><div class="eyebrow" id="tc-eye">第 一 站</div><h1 id="tc-title">心智圖編輯</h1><p id="tc-desc"></p></div>
+
+      <div class="gate" id="gate">
+        <div class="gatecard">
+          <div class="gicon">✓</div>
+          <div class="geyebrow" id="g-done">第一站完成</div>
+          <h3 id="g-next">準備進入下一站</h3>
+          <p id="g-desc"></p>
+          <button class="gbtn" id="g-cont">▶ 繼續下一站</button>
+          <small>站與站之間的暫停點；點擊繼續播放。（也方便在此分段螢幕錄製）</small>
+        </div>
+      </div>
+
+      <div class="start" id="startov">
+        <div class="eyebrow" id="ov-eye">實 作 練 習 影 片</div>
+        <h2 id="ov-title">AI 賦能學習平台</h2>
+        <div class="meta" id="ov-meta">心智圖 → IPO → Python → PPT 簡報 → 影音腳本<br>附操作步驟旁白語音 · 輕音樂背景 · 每站結束可暫停續播</div>
+        <div class="chips" id="ov-chips"><span data-s="1">① 心智圖</span><span data-s="2">② IPO</span><span data-s="3">③ Python</span><span data-s="4">④ PPT</span><span data-s="5">⑤ 影音腳本</span></div>
+        <button class="playbtn" id="bigplay">▶ 開始播放</button>
+        <small>建議 Chrome / Edge；點擊後啟動語音與音樂（瀏覽器規定）</small>
+      </div>
+    </div>
+
+    <div class="subzone"><div class="sub" id="sub">準備開始…</div></div>
+
+    <div class="ctrl">
+      <button id="c-play" title="播放/暫停">▶</button>
+      <button id="c-replay" title="重播">↻</button>
+      <div class="bar" id="bar"><i><span class="f"></span></i><i><span class="f"></span></i><i><span class="f"></span></i><i><span class="f"></span></i><i><span class="f"></span></i></div>
+      <span class="time" id="time">準備開始</span>
+      <button id="c-srt" class="srt" title="下載本站字幕（YouTube 用）">⬇ 字幕</button>
+      <button id="c-narr" class="on" title="旁白">🔊</button>
+      <button id="c-music" class="on" title="背景音樂">🎵</button>
+    </div>
+  </div>
+
+  <p class="cap">＊畫面依真實平台 UI 重建；紅色標號對應「照圖操作」步驟。網址加 <code>?s=1</code>～<code>?s=5</code> 可單獨觀看某一站。可用 <code>&lt;iframe&gt;</code> 嵌入平台，或分段螢幕錄製後上傳 YouTube。「⬇ 字幕」匯出當前站 SRT 供 YouTube 上字幕。</p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  const $=id=>document.getElementById(id);
+  const reduceMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const CN=['一','二','三','四','五'];
+
+  // deep-link: ?s=1..5 → single-station mode; ?embed=1 → fill iframe (no outer chrome)
+  let SINGLE=null;
+  try{const p=new URLSearchParams(location.search);const sv=p.get('s');if(sv&&/^[1-5]$/.test(sv))SINGLE=parseInt(sv,10)-1;
+    if(p.get('embed'))document.documentElement.classList.add('embed');}catch(e){}
+
+  let curS=0,curStep=0,playing=false,paused=false,stopped=false,started=false;
+  let narrationOn=true,musicOn=true,activeWait=null,gateResolve=null,gateCancel=null;
+
+  function wait(ms){return new Promise(resolve=>{let rem=ms,t0=Date.now(),tm=null,done=false;
+    const fin=()=>{if(done)return;done=true;activeWait=null;resolve('done');};
+    activeWait={pause(){if(done)return;clearTimeout(tm);rem-=Date.now()-t0;},
+      resume(){if(done)return;t0=Date.now();tm=setTimeout(fin,rem);},
+      cancel(){if(done)return;done=true;clearTimeout(tm);resolve('cancel');}};
+    tm=setTimeout(fin,ms);});}
+  function bail(r){return r==='cancel'||stopped;}
+
+  let voice=null;
+  function pickVoice(){if(!('speechSynthesis'in window))return;const v=speechSynthesis.getVoices();
+    voice=v.find(x=>/zh[-_]?TW/i.test(x.lang))||v.find(x=>/zh[-_]?(HK|Hant)/i.test(x.lang))||v.find(x=>/^zh/i.test(x.lang))||v.find(x=>/cmn/i.test(x.lang))||null;}
+  if('speechSynthesis'in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice;}
+  function speak(t){if(!narrationOn||!('speechSynthesis'in window)||!t)return;
+    try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='zh-TW';u.rate=1.0;u.pitch=1.02;if(voice)u.voice=voice;speechSynthesis.speak(u);}catch(e){}}
+
+  let actx=null,master=null,noteTimer=null;
+  function initAudio(){if(actx)return;try{
+    actx=new (window.AudioContext||window.webkitAudioContext)();
+    master=actx.createGain();master.gain.value=0;master.connect(actx.destination);
+    const lp=actx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=640;lp.connect(master);
+    const pg=actx.createGain();pg.gain.value=0.5;pg.connect(lp);
+    [146.83,220.00].forEach((f,i)=>{const o=actx.createOscillator();o.type='sine';o.frequency.value=f;o.detune.value=i?6:-6;const g=actx.createGain();g.gain.value=0.5;o.connect(g);g.connect(pg);o.start();});
+    breathe();
+  }catch(e){actx=null;}}
+  function breathe(){if(actx){const t=actx.currentTime;if(musicOn&&playing&&!paused){master.gain.cancelScheduledValues(t);master.gain.linearRampToValueAtTime(0.085,t+3.2);master.gain.linearRampToValueAtTime(0.055,t+6.4);}}setTimeout(breathe,6400);}
+  const PENTA=[261.63,293.66,329.63,392.00,440.00,523.25];
+  function scheduleNotes(){clearTimeout(noteTimer);const loop=()=>{if(actx&&musicOn&&playing&&!paused){const f=PENTA[Math.floor(Math.random()*PENTA.length)];const o=actx.createOscillator();o.type='triangle';o.frequency.value=f;const g=actx.createGain();const t=actx.currentTime;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.05,t+0.25);g.gain.exponentialRampToValueAtTime(0.0008,t+1.9);o.connect(g);g.connect(master);o.start(t);o.stop(t+2);}noteTimer=setTimeout(loop,2600+Math.random()*1600);};loop();}
+  function musicGain(on){if(!actx)return;const t=actx.currentTime;master.gain.cancelScheduledValues(t);master.gain.linearRampToValueAtTime(on&&playing&&!paused?0.075:0.0001,t+0.5);}
+
+  function showBadge(text,sel){const b=$('badge'),sp=$('spot'),stage=$('stage');
+    if(!text||!sel){b.style.opacity=0;sp.style.opacity=0;sp.classList.remove('pulse');return;}
+    const tgt=document.querySelector(sel);if(!tgt){b.style.opacity=0;sp.style.opacity=0;return;}
+    const sr=stage.getBoundingClientRect(),tr=tgt.getBoundingClientRect();
+    b.textContent=text;b.style.left=(tr.left-sr.left-15)+'px';b.style.top=(tr.top-sr.top-15)+'px';b.style.opacity=1;
+    sp.style.left=(tr.left-sr.left-6)+'px';sp.style.top=(tr.top-sr.top-6)+'px';sp.style.width=(tr.width+12)+'px';sp.style.height=(tr.height+12)+'px';sp.style.opacity=1;
+    if(!reduceMotion)sp.classList.add('pulse');}
+
+  function typeInto(el,text,per){el.classList.add('cursor');
+    if(reduceMotion){el.textContent=text;el.classList.remove('cursor');return;}
+    let i=0;const tick=()=>{if(stopped){el.classList.remove('cursor');return;}if(paused){setTimeout(tick,120);return;}
+      el.textContent=text.slice(0,++i);if(i>=text.length){setTimeout(()=>el.classList.remove('cursor'),500);return;}setTimeout(tick,per||52);};tick();}
+  function revealList(ulId,items){const ul=$(ulId);items.forEach((t,k)=>setTimeout(()=>{if(stopped)return;const li=document.createElement('li');li.className='item';li.textContent='• '+t;ul.appendChild(li);requestAnimationFrame(()=>li.classList.add('show'));},reduceMotion?0:k*560));}
+  function press(id){const b=$(id);if(!b)return;b.classList.add('press');setTimeout(()=>b.classList.remove('press'),520);}
+  function toast(id,html){const t=$(id);t.innerHTML=html;t.classList.add('show');}
+  function hideToasts(){['s2toast','s4toast'].forEach(i=>$(i)&&$(i).classList.remove('show'));}
+
+  function drawMind(){const svg=$('s1svg');svg.innerHTML='';const NS='http://www.w3.org/2000/svg';
+    const mk=(t,a,x)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(x!=null)e.textContent=x;svg.appendChild(e);return e;};
+    const root={x:300,y:36},brs=[{x:110,y:140,t:'輸入',c:'#3b82f6',l:S1.in},{x:300,y:140,t:'處理',c:'#0d9488',l:S1.pr},{x:490,y:140,t:'輸出',c:'#ec4899',l:S1.ou}];
+    brs.forEach((b,bi)=>{const ln=mk('line',{x1:root.x,y1:root.y+8,x2:b.x,y2:b.y-8,stroke:b.c});ln.style.animationDelay=(bi*.12)+'s';
+      b.l.forEach((lf,li)=>{const ly=b.y+38+li*32;const l2=mk('line',{x1:b.x,y1:b.y+8,x2:b.x,y2:ly-8,stroke:b.c});l2.style.animationDelay=(.4+li*.1)+'s';
+        mk('rect',{x:b.x-50,y:ly-12,width:100,height:22,rx:7,fill:'#0a1220',stroke:b.c,'stroke-width':1.2,style:'stroke-dasharray:none;stroke-dashoffset:0;animation:none'});
+        mk('text',{x:b.x,y:ly+3,'text-anchor':'middle',fill:'#cbd5e1',style:'stroke:none;animation:none;font-size:10.5px'},lf);});
+      mk('rect',{x:b.x-44,y:b.y-14,width:88,height:27,rx:8,fill:b.c,style:'stroke:none;animation:none'});
+      mk('text',{x:b.x,y:b.y+4,'text-anchor':'middle',fill:'#fff',style:'stroke:none;animation:none;font-size:12px;font-weight:700'},b.t);});
+    mk('rect',{x:root.x-66,y:root.y-16,width:132,height:30,rx:9,fill:'#a855f7',style:'stroke:none;animation:none'});
+    mk('text',{x:root.x,y:root.y+4,'text-anchor':'middle',fill:'#fff',style:'stroke:none;animation:none;font-size:11.5px;font-weight:700'},'智慧農業系統');
+    $('s1treebox').classList.add('show');}
+
+  function addIpoRows(){const tb=$('s2body');const rows=[['土壤溼度資料','資料清洗','清洗後資料集'],['氣溫紀錄','配對 t 檢定','顯著性 p 值'],['作業工時','模擬驗證','效率指標／圖表']];
+    rows.forEach((r,k)=>setTimeout(()=>{if(stopped)return;const tr=document.createElement('tr');tr.className='row';tr.innerHTML=`<td>${r[0]}</td><td>→ ${r[1]}</td><td>→ ${r[2]}</td>`;tb.appendChild(tr);requestAnimationFrame(()=>tr.classList.add('show'));},reduceMotion?0:k*520));}
+
+  function revealCode(){const c=$('s3code');const code=
+`<span class="cm"># 智慧農業人機協作績效評估系統</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> scipy <span class="kw">import</span> stats
+
+<span class="kw">def</span> <span class="fn">load_input</span>():           <span class="cm"># INPUT</span>
+    <span class="kw">return</span> pd.read_csv(<span class="st">"data.csv"</span>)
+
+<span class="kw">def</span> <span class="fn">process</span>(df):           <span class="cm"># PROCESS</span>
+    df = df.dropna()
+    t, p = stats.ttest_rel(df.pre, df.post)
+    <span class="kw">return</span> t, p
+
+<span class="kw">def</span> <span class="fn">output</span>(t, p):           <span class="cm"># OUTPUT</span>
+    <span class="fn">print</span>(<span class="st">f"t={t:.2f}, p={p:.4f}"</span>)`;
+    if(reduceMotion){c.innerHTML=code;return;}
+    c.innerHTML='';let i=0;const plain=code;const tick=()=>{if(stopped)return;if(paused){setTimeout(tick,120);return;}i+=8;c.innerHTML=plain.slice(0,i);if(i<plain.length)setTimeout(tick,16);};tick();}
+
+  function revealSlides(){const g=$('s4slides');g.innerHTML='';const names=['封面','目錄','心智圖','IPO 表','程式碼','結語'];
+    names.forEach((n,k)=>{const d=document.createElement('div');d.className='slide';d.innerHTML=`<div class="sh"></div><div class="sl"></div><div class="sl" style="width:70%"></div><b>${n}</b>`;g.appendChild(d);setTimeout(()=>{if(stopped)return;d.classList.add('show');},reduceMotion?0:k*180);});}
+
+  function drawQR(){const q=$('s5qrbox');q.innerHTML='';const seed=[0xB,0x5,0x9,0xE,0x3,0x7,0xA,0x6,0xC,0x2,0xF];
+    for(let r=0;r<11;r++)for(let cc=0;cc<11;cc++){const on=((seed[r]>>(cc%4))^(seed[cc]>>(r%4))^(r*cc))&1;const i=document.createElement('i');if(!on)i.className='o';q.appendChild(i);}
+    [...q.children].forEach((i,n)=>{const r=Math.floor(n/11),c=n%11;const fin=(r<3&&c<3)||(r<3&&c>7)||(r>7&&c<3);if(fin){i.className='';i.style.background='#a855f7';}});
+    q.classList.add('show');}
+
+  const S1={prob:'智慧農業人機協作績效評估',in:['土壤溼度','氣溫紀錄','作業工時'],pr:['資料清洗','配對 t 檢定','模擬驗證'],ou:['效率指標','統計報表','視覺化圖表']};
+
+  const stations=[
+  {scene:'sc0',tag:'第一站 · 心智圖編輯',eye:'第 一 站',title:'心智圖編輯 · 拆解問題',
+   tdesc:'把一個複雜的問題，拆成輸入、處理、輸出三條分支，先想清楚全貌，再視覺化成樹狀心智圖。',
+   short:'把問題拆成三條分支，視覺化成心智圖。',
+   intro:'第一站，心智圖編輯。這一站的任務是拆解問題：把一個看起來複雜的專題，拆成輸入、處理、輸出三條分支，先把全貌想清楚。記住核心精神，先思考、後驗證。',
+   id:8800,
+   cues:[
+    {b:'❶',s:'#s1prob',sub:'步驟❶ 寫下你要解決的問題。',n:'拆解的起點，先寫下你要解決的問題，例如：智慧農業人機協作績效評估。',d:7000,a:()=>typeInto($('s1prob'),S1.prob,60)},
+    {b:'❷',s:'.br.in',sub:'步驟❷ 第一條分支「輸入」：需要哪些資料。',n:'第一條分支，輸入。想想這個問題需要哪些資料，例如土壤溼度、氣溫紀錄、作業工時。',d:7600,a:()=>revealList('s1in',S1.in)},
+    {b:'❸',s:'.br.pr',sub:'步驟❸ 第二條分支「處理」：最核心，拆細一點。',n:'第二條分支，處理。要對資料做哪些處理，例如資料清洗、配對 t 檢定、模擬驗證。這條最核心，拆得越細越好。',d:8600,a:()=>revealList('s1pr',S1.pr)},
+    {b:'❹',s:'.br.ou',sub:'步驟❹ 第三條分支「輸出」：要產出什麼。',n:'第三條分支，輸出。最後要產出什麼，例如效率指標、統計報表、視覺化圖表。',d:7400,a:()=>revealList('s1ou',S1.ou)},
+    {b:'❺',s:'#s1tree',sub:'步驟❺ 樹狀視覺化，檢查結構平衡後儲存。',n:'三條分支都拆好後，按樹狀視覺化，把心智圖畫出來，檢查結構是否平衡；確認無誤就儲存，進入下一站。',d:8800,a:()=>{press('s1tree');setTimeout(drawMind,500);setTimeout(()=>press('s1save'),3200);}},
+   ]},
+
+  {scene:'sc1',tag:'第二站 · IPO 結構表',eye:'第 二 站',title:'IPO 結構表',
+   tdesc:'把心智圖的分支，整理成嚴謹的「輸入—處理—輸出」三模組對應表，作為下一站寫程式的藍圖。',
+   short:'把分支整理成嚴謹的輸入—處理—輸出對應表。',
+   intro:'第二站，IPO 結構表。這一站把剛才心智圖的分支，整理成一張嚴謹的輸入、處理、輸出對應表，作為下一站寫程式的藍圖。',
+   id:8000,
+   cues:[
+    {b:'❶',s:'#s2add',sub:'步驟❶ 自動帶入內容；需要更多列按＋新增。',n:'系統會自動帶入心智圖的內容。需要更多列時，按加號新增，逐列把每一筆輸入、經過什麼處理、變成什麼輸出，寫清楚。',d:8400,a:()=>{press('s2add');addIpoRows();}},
+    {b:'❷',s:'#s2rev',sub:'步驟❷ 先自己想，再按 AI 邏輯審查。',n:'先自己把對應關係寫清楚，再按 AI 邏輯審查，請 AI 檢查流程是否完整、有沒有邏輯斷掉的地方。',d:8000,a:()=>{press('s2rev');setTimeout(()=>toast('s2toast','<b>🔍 AI 邏輯審查</b><br>流程完整。建議在「處理」補上異常值排除，使結論更嚴謹。'),600);}},
+    {b:'❸',s:'#s2md',sub:'步驟❸ 複製 Markdown，貼進書面報告。',n:'需要時，可以按複製 Markdown，把表格直接貼進你的書面報告。',d:6200,a:()=>{hideToasts();press('s2md');}},
+    {b:'❹',s:'#s2dl',sub:'步驟❹ 下載 Excel、PDF、Word 格式。',n:'也能下載 Excel、PDF、Word 等多種格式，方便放進書面報告或附件。',d:6600,a:()=>press('s2dl')},
+    {b:'❺',s:'#s2save',sub:'步驟❺ 儲存並進入下一步，前往程式碼關卡。',n:'確認無誤，按儲存並進入下一步，前往程式碼關卡。',d:6000,a:()=>press('s2save')},
+   ]},
+
+  {scene:'sc2',tag:'第三站 · Python 程式碼',eye:'第 三 站',title:'Python 程式碼',
+   tdesc:'依 IPO 表自動生成可執行的程式骨架，重點是讀懂、修改它，而不是拿現成答案。',
+   short:'依 IPO 表自動生成程式骨架，再自己讀懂與修改。',
+   intro:'第三站，Python 程式碼。這一站會依你的 IPO 表，自動生成一份可執行的程式骨架；重點不是拿到現成程式，而是讀懂並修改它。',
+   id:8000,
+   cues:[
+    {b:'❶',s:'#s3method',sub:'步驟❶ 選生成方式：離線模板 或 AI 智慧生成。',n:'先選生成方式。沒有金鑰，選離線模板，即時又免金鑰；有金鑰，可選 AI 智慧生成，實作邏輯更具體。',d:8000,a:()=>press('s3method')},
+    {b:'❷',s:'#s3lang',sub:'步驟❷ 選程式語言，建議 Python。',n:'再選程式語言，建議用 Python，平台也支援 JavaScript 與 Java。',d:6400,a:()=>press('s3lang')},
+    {b:'❸',s:'#s3hint',sub:'步驟❸ 額外提示：給 AI 更具體的指示。',n:'在額外提示欄，給 AI 更具體的指示，例如：使用 pandas 與 matplotlib，圖表需支援繁體中文字型。',d:8400,a:()=>typeInto($('s3hint'),'使用 pandas 與 matplotlib，圖表支援繁體中文',30)},
+    {b:'❹',s:'#s3gen',sub:'步驟❹ 生成程式碼，切換分頁、可 AI 找 Bug。',n:'按生成程式碼。完成後可切換分頁，檢視各模組；需要時用 AI 找 Bug，或看 OUTPUT 圖表預覽。',d:8200,a:()=>{press('s3gen');setTimeout(revealCode,500);}},
+    {b:'❺',s:'#s3save',sub:'步驟❺ 自己讀懂、執行、修改後再儲存。',n:'記得，AI 生成的程式是起點，不是終點。自己逐段讀懂、實際執行、依需求修改後，再儲存進入下一站。',d:8400,a:()=>press('s3save')},
+   ]},
+
+  {scene:'sc3',tag:'第四站 · PPT 簡報',eye:'第 四 站',title:'PPT 簡報',
+   tdesc:'把前三站成果一鍵彙整成完整專題簡報，並用 AI 評分、翻譯與規格檢查讓它更專業。',
+   short:'把前三站成果一鍵彙整成完整專題簡報。',
+   intro:'第四站，PPT 簡報。這一站把你的心智圖、IPO 與程式，一鍵彙整成一份完整的專題簡報，這就是你的專題成果。',
+   id:7600,
+   cues:[
+    {b:'❶',s:'#s4ref',sub:'步驟❶ 重新整理大綱；設定主題、語言、作者。',n:'先按重新整理大綱，讓簡報依前三站的最新內容更新；上方可設定佈景主題、語言與作者單位。',d:7800,a:()=>press('s4ref')},
+    {b:'❷',s:'#s4gen',sub:'步驟❷ 生成並下載 PPTX。',n:'按生成並下載 PPTX，取得封面、目錄、各模組說明與結語俱全的簡報檔。',d:7400,a:()=>{press('s4gen');setTimeout(revealSlides,500);}},
+    {b:'❸',s:'#s4score',sub:'步驟❸ AI 簡報評分，取得改善建議。',n:'有金鑰時，可按 AI 簡報評分，取得簡報的具體改善建議。',d:6800,a:()=>{press('s4score');setTimeout(()=>toast('s4toast','<b>⭐ AI 簡報評分：88 分</b><br>結構清晰；建議結語補上量化成效數據。'),600);}},
+    {b:'❹',s:'#s4tr',sub:'步驟❹ 多語言翻譯。',n:'也能用多語言翻譯，把簡報翻成英、日、韓、西、法、德等語言。',d:6400,a:()=>{hideToasts();press('s4tr');}},
+    {b:'❺',s:'#s4spec',sub:'步驟❺ 規格合規檢查（MDPI／IEEE）。',n:'要投稿研討會或競賽時，用規格合規檢查，對照 MDPI、IEEE 等格式產出摘要，再進入下一站。',d:7600,a:()=>press('s4spec')},
+   ]},
+
+  {scene:'sc4',tag:'第五站 · 影音腳本',eye:'第 五 站',title:'影音腳本與旁白',
+   tdesc:'把靜態簡報變成可錄製的影音成果：影片腳本、旁白逐字稿、字幕與 QR 碼。',
+   short:'把簡報變成影片腳本、旁白與字幕。',
+   intro:'第五站，影音腳本與旁白。最後一站，把靜態的簡報，變成可以錄製的影音成果，依起承轉合生成。',
+   id:7400,
+   cues:[
+    {b:'❶',s:'#s5gen',sub:'步驟❶ 生成影音腳本（需 AI）。',n:'按生成影音腳本，系統會依你的簡報內容，用起承轉合，生成影片腳本。',d:6800,a:()=>{press('s5gen');setTimeout(()=>{$('v0').classList.add('on');$('s5prev').textContent='【影片腳本】開場：點出智慧農業面臨的人力與效率問題…（起承轉合四段）';},500);}},
+    {b:'❷',s:'.vtabs',sub:'步驟❷ 切換四種產出分頁。',n:'生成後切換四個分頁：影片腳本、旁白逐字稿、AI 影片提示，以及字幕檔。',d:7000,a:()=>['v0','v1','v2','v3'].forEach((id,k)=>setTimeout(()=>{$(id).classList.add('on');if(k===1)$('s5prev').textContent='【旁白逐字稿】本研究評估在田間作業導入 AI 輔助後，人機協作的效率變化…';},k*420))},
+    {b:'❸',s:'#s5srt',sub:'步驟❸ 下載 SRT／VTT 字幕，可上傳影片平台。',n:'下載字幕，SRT 或 VTT，可以直接匯入剪輯軟體，或上傳影片平台自動上字幕。',d:7000,a:()=>{press('s5srt');$('s5prev').textContent='【字幕檔】00:00:01,000 → 00:00:05,000  本研究評估人機協作的效率變化…';}},
+    {b:'❹',s:'#s5tts',sub:'步驟❹ TTS 朗讀旁白，預覽節奏與斷句。',n:'按 TTS 朗讀旁白，用播放、暫停，預覽旁白的節奏與斷句。',d:6200,a:()=>press('s5tts')},
+    {b:'❺',s:'#s5qr',sub:'步驟❺ 生成 QR 碼，分享專題連結。',n:'最後，按生成 QR 碼，把專題連結做成 QR，放在海報或簡報上分享。這樣，整個專題就完成了！',d:7600,a:()=>{press('s5qr');setTimeout(drawQR,500);}},
+   ]},
+  ];
+
+  const finalOutroText='五站全部完成！從拆解問題的心智圖，到結構、程式、簡報，再到影音展示，這就是一份完整專題的誕生。下課前，別忘了匯出專案 JSON 備份。';
+
+  function showScene(i){stations.forEach((s,k)=>$(s.scene).classList.toggle('active',k===i));}
+  function setSidebar(active){for(let k=0;k<5;k++)$('st'+k).classList.toggle('active',k===active);}
+  function markDone(i){const li=$('st'+i);li.classList.remove('active');li.classList.add('done');}
+  function paint(){[...$('bar').children].forEach((seg,k)=>{const f=seg.querySelector('.f');f.style.width=k<curS?'100%':k===curS?(((curStep+1)/stations[curS].cues.length)*100)+'%':'0%';});
+    $('time').textContent='第'+CN[curS]+'站 · 步驟 '+(curStep+1)+'/'+stations[curS].cues.length;$('tag').textContent=stations[curS].tag;}
+
+  function showCard(s){$('tc-eye').textContent=s.eye;$('tc-title').textContent=s.title;$('tc-desc').textContent=s.tdesc;$('titlecard').classList.add('show');}
+  function hideCard(){$('titlecard').classList.remove('show');}
+  function showFinal(){$('tc-eye').textContent='專 題 完 成';$('tc-title').textContent='🎉 五站全部完成';$('tc-desc').textContent='記得匯出專案 JSON 備份，留一份可再編輯的成果。';$('titlecard').classList.add('show');}
+  function showStationDone(i){$('tc-eye').textContent='本 站 完 成';$('tc-title').textContent='✓ 第'+CN[i]+'站完成';$('tc-desc').textContent='可按 ↻ 重播本站，或回首頁觀看其他站別。';$('titlecard').classList.add('show');}
+
+  function gateWait(i){return new Promise(res=>{
+    $('g-done').textContent='第'+CN[i]+'站完成';$('g-next').textContent='準備進入 '+stations[i+1].title;$('g-desc').textContent=stations[i+1].short;
+    $('g-cont').textContent='▶ 繼續第'+CN[i+1]+'站 · '+stations[i+1].title;
+    $('gate').classList.add('show');musicGain(false);
+    gateResolve=()=>{$('gate').classList.remove('show');gateResolve=null;gateCancel=null;if(musicOn)musicGain(true);res('ok');};
+    gateCancel=()=>{$('gate').classList.remove('show');gateResolve=null;gateCancel=null;res('cancel');};});}
+
+  async function runStation(i){
+    curS=i;curStep=0;setSidebar(i);showScene(i);paint();
+    const S=stations[i];showCard(S);$('sub').textContent=S.short;speak(S.intro);
+    let r=await wait(S.id);if(bail(r))return 'cancel';hideCard();
+    for(let c=0;c<S.cues.length;c++){if(stopped)return 'cancel';curStep=c;paint();
+      const q=S.cues[c];$('sub').textContent=q.sub;showBadge(q.b,q.s);if(q.a)q.a();speak(q.n);
+      r=await wait(q.d);if(bail(r))return 'cancel';}
+    markDone(i);showBadge(null,null);
+    if(SINGLE!=null){showStationDone(i);$('sub').textContent='✓ 第'+CN[i]+'站完成。按 ↻ 重播。';speak('第'+CN[i]+'站，操作完成。');return 'ok';}
+    if(i<stations.length-1){speak('第'+CN[i]+'站完成。');const g=await gateWait(i);if(g==='cancel'||stopped)return 'cancel';}
+    else{showFinal();$('sub').textContent='🎉 全部完成！記得匯出 JSON 備份。';speak(finalOutroText);}
+    return 'ok';}
+  async function runAll(){if(SINGLE!=null){await runStation(SINGLE);finishAll();return;}
+    for(let s=0;s<stations.length;s++){const r=await runStation(s);if(r==='cancel'||stopped)return;}finishAll();}
+  function finishAll(){playing=false;$('c-play').textContent='▶';musicGain(false);showBadge(null,null);}
+
+  function startShow(){if(started){if(paused)togglePlay();return;}
+    started=true;stopped=false;paused=false;playing=true;$('startov').style.display='none';$('c-play').textContent='⏸';
+    initAudio();if(actx&&actx.state==='suspended')actx.resume();if(musicOn&&actx){musicGain(true);scheduleNotes();}
+    runAll();}
+  function togglePlay(){if(!started){startShow();return;}if(!playing){replay();return;}
+    paused=!paused;
+    if(paused){$('c-play').textContent='▶';if(activeWait)activeWait.pause();if('speechSynthesis'in window)speechSynthesis.pause();musicGain(false);}
+    else{$('c-play').textContent='⏸';if(activeWait)activeWait.resume();if('speechSynthesis'in window)speechSynthesis.resume();if(actx&&actx.state==='suspended')actx.resume();if(musicOn)musicGain(true);}}
+  function resetAll(){
+    $('s1prob').textContent='（先寫下你要解決的問題）';['s1in','s1pr','s1ou'].forEach(i=>$(i).innerHTML='');$('s1treebox').classList.remove('show');
+    $('s2body').innerHTML='';$('s3hint').textContent='';$('s3hint').classList.remove('cursor');
+    $('s3code').innerHTML='<span class="cm"># 按「🚀 生成程式碼」後，這裡會出現程式骨架…</span>';$('s4slides').innerHTML='';
+    ['v0','v1','v2','v3'].forEach(i=>$(i).classList.remove('on'));$('s5prev').textContent='尚未生成。按上方「生成影音腳本」開始。';$('s5qrbox').innerHTML='';$('s5qrbox').classList.remove('show');
+    hideToasts();for(let k=0;k<5;k++)$('st'+k).classList.remove('done','active');$('st'+(SINGLE!=null?SINGLE:0)).classList.add('active');hideCard();showBadge(null,null);}
+  function replay(){stopped=true;if(activeWait)activeWait.cancel();if(gateCancel)gateCancel();if('speechSynthesis'in window)speechSynthesis.cancel();
+    setTimeout(()=>{resetAll();stopped=false;paused=false;playing=true;started=true;curS=SINGLE!=null?SINGLE:0;$('c-play').textContent='⏸';
+      if(actx&&actx.state==='suspended')actx.resume();if(musicOn&&actx)musicGain(true);runAll();},70);}
+
+  function srtTime(ms){const h=Math.floor(ms/3600000),m=Math.floor(ms/60000)%60,s=Math.floor(ms/1000)%60,x=ms%1000;const p=(v,n)=>String(v).padStart(n,'0');return `${p(h,2)}:${p(m,2)}:${p(s,2)},${p(x,3)}`;}
+  function exportSRT(){const S=stations[curS];let t=0,out='',n=1;const items=[{n:S.intro,d:S.id},...S.cues.map(c=>({n:c.n,d:c.d}))];
+    items.forEach(it=>{const a=t,b=t+it.d-300;out+=`${n}\n${srtTime(a)} --> ${srtTime(b)}\n${it.n}\n\n`;t+=it.d;n++;});
+    const blob=new Blob([out],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`第${CN[curS]}站_${S.title}_字幕.srt`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+
+  // single-station UI prep
+  function applySingle(){if(SINGLE==null)return;const S=stations[SINGLE];
+    $('ov-eye').textContent='第 '+CN[SINGLE]+' 站 · 實 作 練 習';
+    $('ov-title').textContent=S.title;
+    $('ov-meta').innerHTML=S.tdesc+'<br>附操作步驟旁白語音 · 輕音樂背景';
+    [...$('ov-chips').children].forEach(sp=>sp.classList.toggle('hl',parseInt(sp.dataset.s,10)===SINGLE+1));
+    setSidebar(SINGLE);curS=SINGLE;showScene(SINGLE);}
+
+  $('bigplay').onclick=startShow;
+  $('c-play').onclick=togglePlay;
+  $('c-replay').onclick=()=>{if(!started){startShow();return;}replay();};
+  $('g-cont').onclick=()=>{if(gateResolve)gateResolve();};
+  $('c-srt').onclick=()=>{if(!started){alert('請先開始播放，再下載當前站別的字幕。');return;}exportSRT();};
+  $('c-narr').onclick=function(){narrationOn=!narrationOn;this.classList.toggle('on',narrationOn);this.textContent=narrationOn?'🔊':'🔇';if(!narrationOn&&'speechSynthesis'in window)speechSynthesis.cancel();};
+  $('c-music').onclick=function(){musicOn=!musicOn;this.classList.toggle('on',musicOn);this.textContent=musicOn?'🎵':'🔈';musicGain(musicOn);if(musicOn&&actx)scheduleNotes();};
+  window.addEventListener('resize',()=>{if(playing&&!paused)showBadge(stations[curS].cues[curStep]?.b,stations[curS].cues[curStep]?.s);});
+
+  applySingle();
+})();
+</script>
+</body>
+</html>
