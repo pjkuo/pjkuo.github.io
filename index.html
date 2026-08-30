@@ -43,7 +43,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC","Segoe UI",sans-serif;
-  color:var(--ink);background:#F1F5F9;line-height:1.5;-webkit-font-smoothing:antialiased;font-size:14px}
+  color:var(--ink);background:#F1F5F9;line-height:1.55;-webkit-font-smoothing:antialiased;font-size:15px}
 a{text-decoration:none;color:inherit}
 .en{font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif}
 .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
@@ -56,7 +56,7 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:5
   color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;flex:0 0 30px}
 .brand small{display:block;font-size:9.5px;font-weight:600;color:var(--mute);letter-spacing:.4px}
 .nav-links{display:flex;gap:2px;flex-wrap:wrap}
-.nav-links a{padding:6px 11px;border-radius:8px;font-size:13px;font-weight:600;color:var(--mute);transition:.2s}
+.nav-links a{padding:6px 11px;border-radius:8px;font-size:14px;font-weight:600;color:var(--mute);transition:.2s}
 .nav-links a:hover{color:var(--primary);background:var(--soft)}
 .nav-links a small{display:none}
 @media(max-width:600px){.nav-links{display:none}}
@@ -69,15 +69,43 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:5
             radial-gradient(circle at 88% 82%,rgba(255,255,255,.1),transparent 46%)}
 .hero>*{position:relative;z-index:1}
 .hero-tag{font-size:11px;letter-spacing:2px;opacity:.85;font-weight:700;margin-bottom:6px}
-.hero h1{font-size:22px;letter-spacing:.3px;line-height:1.3}
-.hero h1 .en{font-size:13px;font-weight:600;opacity:.9;margin-left:8px;letter-spacing:.3px}
-.hero-sub{font-size:12.5px;opacity:.93;margin-top:7px;max-width:840px;line-height:1.55}
+.hero h1{font-size:clamp(22px,2.6vw,27px);letter-spacing:.3px;line-height:1.3}
+.hero h1 .en{font-size:14px;font-weight:600;opacity:.9;margin-left:8px;letter-spacing:.3px}
+.hero-sub{font-size:15px;opacity:.95;margin-top:8px;max-width:840px;line-height:1.6}
 .hero-flow{display:flex;gap:7px;margin-top:13px;flex-wrap:wrap;align-items:center}
 .hero-flow .eco{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);
-  padding:6px 12px;border-radius:11px;font-size:12px;font-weight:700;line-height:1.2}
-.hero-flow .eco small{display:block;font-size:9px;font-weight:500;opacity:.82;letter-spacing:.2px;margin-top:1px}
+  padding:7px 13px;border-radius:11px;font-size:13.5px;font-weight:700;line-height:1.2}
+.hero-flow .eco small{display:block;font-size:10.5px;font-weight:500;opacity:.82;letter-spacing:.2px;margin-top:1px}
 .hero-flow .arr{opacity:.6;font-weight:800;font-size:13px}
 @media(max-width:640px){.hero-flow .eco small{display:none}.hero h1 .en{display:none}.hero-flow .arr{display:none}}
+
+
+/* 新生引導：四步驟（功能＋學習意義） */
+.fresh{margin-top:20px;background:#fff;border:1.5px solid #C7D2FE;border-radius:16px;padding:20px 22px 18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.fresh::before{content:"";position:absolute;left:0;top:0;right:0;height:5px;background:linear-gradient(90deg,#16A34A,#2563EB,#D97706,#DB2777)}
+.fresh-badge{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.12em;color:#1E3A8A;background:#FDE68A;padding:4px 10px;border-radius:999px;margin-bottom:8px}
+.fresh h2{font-size:clamp(20px,2.4vw,24px);color:var(--primary);line-height:1.3;margin:0}
+.fresh h2 .en{font-size:13px;font-weight:600;color:var(--mute);margin-left:8px}
+.fresh-lead{font-size:15px;line-height:1.65;color:#1F2937;margin-top:8px;max-width:80ch}
+.fresh-lead b{color:var(--primary)}
+.fresh-chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:12px 0 4px;font-size:14.5px;font-weight:800;color:#374151}
+.fresh-chain i{font-style:normal;color:#B45309}
+.fresh-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px}
+.fs{background:#F8FAFC;border:1px solid #E2E8F0;border-top:5px solid var(--ax,#2563EB);border-radius:13px;padding:14px 15px 13px;display:flex;flex-direction:column}
+.fs.s1{--ax:#16A34A}.fs.s2{--ax:#2563EB}.fs.s3{--ax:#D97706}.fs.s4{--ax:#DB2777}
+.fs .hd{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.fs .ic{font-size:26px;line-height:1}
+.fs .num{font-size:11.5px;font-weight:800;letter-spacing:.1em;color:var(--ax)}
+.fs h3{margin:0;font-size:17px;color:#111827;line-height:1.25}
+.fs .row{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;font-size:14px;line-height:1.6;color:#1F2937;flex:1}
+.fs .lb{font-weight:800;color:var(--ax);white-space:nowrap}
+.fs .row b{color:#111827}
+.fs .go{margin-top:10px;align-self:flex-start;font-size:13px;font-weight:800;color:#fff;background:var(--ax);padding:7px 12px;border-radius:8px}
+.fs .go:hover{filter:brightness(1.08)}
+.fresh-foot{margin-top:12px;font-size:13.5px;color:#4B5563;line-height:1.6;display:flex;flex-wrap:wrap;gap:6px 16px}
+.fresh-foot b{color:#111827}
+@media(max-width:1000px){.fresh-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.fresh-grid{grid-template-columns:1fr}.fresh{padding:16px}.fresh h2 .en{display:none}}
 
 /* sections + heads */
 main>section{margin-top:24px}
@@ -85,11 +113,11 @@ main>section{margin-top:24px}
 .sec-head .bar{width:4px;height:20px;background:var(--accent);border-radius:3px;flex:0 0 4px}
 .sec-head.tool .bar{background:var(--c-tool)}
 .sec-head.video .bar{background:#DC2626}
-.sec-head h2{font-size:17px;color:var(--primary);display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.sec-head h2{font-size:19px;color:var(--primary);display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 .sec-head.tool h2{color:var(--c-tool)}
 .sec-head.video h2{color:#B91C1C}
 .sec-head h2 .en{font-size:12px;font-weight:600;color:var(--mute)}
-.sec-head p{font-size:12px;color:var(--mute);margin-top:1px;line-height:1.45}
+.sec-head p{font-size:13.5px;color:var(--mute);margin-top:2px;line-height:1.5}
 @media(max-width:600px){.sec-head p{display:none}}
 .sub-label{font-size:13px;color:var(--c-tool);font-weight:800;margin:16px 0 9px;display:flex;align-items:center;gap:8px}
 .sub-label .en{font-size:11px;font-weight:600;color:var(--mute)}
@@ -103,10 +131,10 @@ main>section{margin-top:24px}
 .pcard:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
 .pcard .ic{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;
   font-size:21px;margin-bottom:10px}
-.pcard h3{font-size:15px;color:var(--primary);display:flex;align-items:center;gap:6px;flex-wrap:wrap;line-height:1.3}
+.pcard h3{font-size:16.5px;color:var(--primary);display:flex;align-items:center;gap:6px;flex-wrap:wrap;line-height:1.3}
 .pcard .en-name{font-size:11px;font-weight:600;color:var(--mute);margin:2px 0 7px}
 .pcard .url{display:none}
-.pcard .desc{font-size:12.5px;color:var(--ink);line-height:1.55;
+.pcard .desc{font-size:14px;color:var(--ink);line-height:1.6;
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .pcard .desc .en{display:none}
 .pcard .tags{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0 12px;flex:1;align-content:flex-start}
@@ -128,7 +156,7 @@ main>section{margin-top:24px}
 .tcard .tt .ti{width:30px;height:30px;border-radius:8px;background:var(--bg-tool);color:var(--c-tool);
   display:flex;align-items:center;justify-content:center;font-size:15px;flex:0 0 30px}
 .tcard .tt .step{margin-left:auto;font-size:9.5px;font-weight:800;color:var(--c-tool);background:var(--bg-tool);padding:2px 7px;border-radius:20px}
-.tcard b{font-size:13.5px;color:var(--primary)}
+.tcard b{font-size:14.5px;color:var(--primary)}
 .tcard .en-name{font-size:10.5px;font-weight:600;color:var(--mute);margin:0 0 6px 38px}
 .tcard .path{display:none}
 .tcard .open{align-self:flex-start;margin:auto 0 0 38px;font-size:12px;font-weight:700;color:var(--c-tool)}
@@ -144,9 +172,9 @@ main>section{margin-top:24px}
 .rec-items{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .rec-item{border:1px solid var(--line);border-radius:9px;padding:9px 11px;transition:.16s}
 .rec-item:hover{border-color:var(--accent);background:var(--soft)}
-.rec-item b{font-size:12.5px;color:var(--ink)}
+.rec-item b{font-size:13.5px;color:var(--ink)}
 .rec-item b .ext{color:var(--accent);font-weight:700}
-.rec-item span{font-size:11px;color:var(--mute);margin-top:2px;
+.rec-item span{font-size:12.5px;color:var(--mute);margin-top:2px;
   display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
 
 /* practice videos — 5 across */
@@ -349,6 +377,32 @@ const PRACTICE=[
     <h1>AI 賦能教學平台入口<span class="en">AI-Empowered Teaching · Platform Portal</span></h1>
     <p class="hero-sub">以 AI 輔助學生自學、專題創作與評量回饋：心智圖 → IPO → Python → 應用模擬，四步驟教學在 AI 協作下加速深化。</p>
     <div class="hero-flow" id="heroFlow"></div>
+  </section>
+
+  <section class="fresh" id="fresh">
+    <span class="fresh-badge">🎓 新生必看 · 30 秒看懂</span>
+    <h2>四個步驟，把一個想法做成能展示的作品<span class="en">Four steps from an idea to a presentable project</span></h2>
+    <p class="fresh-lead">這條路不要求你先會寫程式：<b>先把想法想清楚，再讓 AI 幫你做出來</b>。每一步都有一鍵生成，但「看懂、修改、驗證」由你負責——<b>先思考、後驗證</b>，這就是資管人的本事。</p>
+    <div class="fresh-chain"><i>① 心智圖</i> → <i>② IPO 結構表</i> → <i>③ Python 執行</i> → <i>④ 簡報＋影片</i>　（想清楚 → 拆清楚 → 做出來 → 說出來）</div>
+    <div class="fresh-grid">
+      <div class="fs s1"><div class="hd"><span class="ic">🧠</span><div><div class="num">STEP 1</div><h3>心智圖：想清楚</h3></div></div>
+        <div class="row"><span class="lb">功能</span><span>填專題名稱，用 <b>INPUT／PROCESS／OUTPUT</b> 三分支寫下系統「吃什麼、做什麼、產出什麼」；可一鍵生成草稿。</span>
+        <span class="lb">意義</span><span>任何系統都是「輸入→處理→輸出」。用自己的話拆解，是<b>運算思維</b>的第一課，也是「先思考」的起點。</span></div>
+        <a class="go" href="https://pjkuo.github.io/AI-empower-platform/" target="_blank" rel="noopener">開始第 1 步 ↗</a></div>
+      <div class="fs s2"><div class="hd"><span class="ic">📋</span><div><div class="num">STEP 2</div><h3>IPO 結構表：拆清楚</h3></div></div>
+        <div class="row"><span class="lb">功能</span><span>心智圖自動變成<b>三模組表格</b>，每一項都要寫清楚「用什麼資料、怎麼處理、產出什麼格式」；AI 可補充說明。</span>
+        <span class="lb">意義</span><span>表格逼你把模糊的話講具體。<b>講得夠具體，程式才寫得出來</b>——這是從「想」到「做」的橋。</span></div>
+        <a class="go" href="https://pjkuo.github.io/mindmap-to-ipo/" target="_blank" rel="noopener">IPO 教材 ↗</a></div>
+      <div class="fs s3"><div class="hd"><span class="ic">🐍</span><div><div class="num">STEP 3</div><h3>Python：做出來</h3></div></div>
+        <div class="row"><span class="lb">功能</span><span>依 IPO 表生成<b>可執行</b>的 Python（模擬資料、統計、圖表），在瀏覽器裡直接跑，不用安裝；結果自動存進專題。</span>
+        <span class="lb">意義</span><span>看到程式跑出你設定的結果，就是「<b>後驗證</b>」：對照 IPO 表檢查對不對，不對就回頭改。AI 出草稿，判斷的人是你。</span></div>
+        <a class="go" href="https://pjkuo.github.io/mind2IPO2python_AI/" target="_blank" rel="noopener">Python 工作台 ↗</a></div>
+      <div class="fs s4"><div class="hd"><span class="ic">🎬</span><div><div class="num">STEP 4</div><h3>簡報＋影片：說出來</h3></div></div>
+        <div class="row"><span class="lb">功能</span><span>前三步自動彙整成 <b>PPTX</b>（含心智圖、執行結果、圖表），再生成腳本與字幕，直接錄成影片；一鍵打包上傳 Moodle。</span>
+        <span class="lb">意義</span><span>做得出來還要<b>講得清楚</b>。用 3 分鐘讓別人聽懂你的系統，是「懂技術也懂表達」的核心能力。</span></div>
+        <a class="go" href="https://pjkuo.github.io/AI-empower-platform/" target="_blank" rel="noopener">簡報與影片 ↗</a></div>
+    </div>
+    <div class="fresh-foot"><span>⏱ <b>第一次</b>走完約 15 分鐘</span><span>🏫 AI 由老師代管，輸入班級碼即可，不用申請金鑰</span><span>💾 作品存在<b>同一台電腦的同一個瀏覽器</b>，換機前先「匯出專案」</span><span>📊 完成後別忘了 <a href="https://pjkuo.github.io/AICT-assess-platform/" target="_blank" rel="noopener" style="color:var(--primary);font-weight:700">4C 學習成效評量</a></span></div>
   </section>
 
   <section id="platforms">
