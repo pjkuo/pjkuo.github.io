@@ -252,64 +252,98 @@ footer .affil{color:var(--ink);font-weight:700}
 footer .affil .en{display:block;font-weight:500;color:var(--mute);font-size:11px}
 </style>
 <script>
-/* AE Router 分流主頁版 v1 — pjkuo.github.io 為分流入口:
-   把頁面上指向 AI 賦能教學 Hub 的連結依 70/30 黏性分流改寫(主站 Netlify / 備援 GitHub Pages),
-   分流結果以 ?r= 帶入 Hub 保持跨網域一致;目標站失效時自動改指另一站。
-   設定:https://pjkuo.github.io/ai-empower/route-config.json(mode/gh/gasUrl)。 */
+/* AE Router 轉址主頁版 v2 — pjkuo.github.io 為分流轉址主頁:
+   進站即請學生輸入學號後 4 碼,依單雙號直接轉往對應平台(單號→主站 Netlify、雙號→備援站 GitHub Pages);
+   已有身分(ae.identity.v1,與備援站同網域共用)則免輸入直接轉。每個分頁工作階段只自動轉一次,按上一頁可回入口頁。
+   訪客/教師可按「訪客/教師瀏覽」留在入口頁;?stay=1、?embed=1 不轉址。route-config force 模式蓋過單雙號。
+   轉址帶 ?r=&sid=&cls=,Hub 端自動帶入身分。頁面上指向 Hub 的連結也會依判定結果改寫。 */
 (function(){
 "use strict";
 var NL='https://ai-empower-hub.netlify.app', GH='https://pjkuo.github.io/ai-empower';
+if(location.hostname!=='pjkuo.github.io') return;
+var p; try{ p=new URLSearchParams(location.search); }catch(e){ return; }
+var noAuto = p.has('stay')||p.has('embed');
+var KEY='ae.route.v2', IDK='ae.identity.v1', SS='ae.home.routed';
 function tfetch(url,opt,ms){ var c=new AbortController(); var t=setTimeout(function(){c.abort();},ms||2500); opt=opt||{}; opt.signal=c.signal; return fetch(url,opt).then(function(r){clearTimeout(t);return r;},function(e){clearTimeout(t);throw e;}); }
-var KEY='ae.route.v2', cfg={mode:'auto',gh:30,gasUrl:''};
-function isHub(href){
-  return href.indexOf(NL)===0 || href.indexOf(GH)===0 ||
-         href.indexOf('/ai-empower/')===0 || href==='/ai-empower' ||
-         (location.hostname==='pjkuo.github.io' && href.indexOf('ai-empower/')===0);
+function idOf(){ try{ return JSON.parse(localStorage.getItem(IDK)||'null')||null; }catch(e){ return null; } }
+function digits(s){ return String(s||'').replace(/\D/g,''); }
+function parity(sid){ var d=digits(sid); if(!d) return ''; return ((+d.charAt(d.length-1))%2===1)?'nl':'gh'; }
+function saveId(sid,cls){ var cur=idOf()||{}; var v={sid:String(sid||'').trim(),cls:String(cls||cur.cls||'').trim(),ts:new Date().toISOString()}; try{ localStorage.setItem(IDK,JSON.stringify(v)); }catch(e){} return v; }
+function pin(w){ try{ localStorage.setItem(KEY,w); }catch(e){} }
+function mark(){ try{ sessionStorage.setItem(SS,'1'); }catch(e){} }
+function marked(){ try{ return !!sessionStorage.getItem(SS); }catch(e){ return false; } }
+function hubUrl(want){
+  var base=(want==='gh')?GH:NL, id=idOf()||{};
+  return base+'/?r='+want+(id.sid?('&sid='+encodeURIComponent(id.sid)+'&cls='+encodeURIComponent(id.cls||'')):'');
 }
 function rewrite(want){
-  var base=(want==='gh')?GH:NL, tag=(base.indexOf('?')<0?'?':'&')+'r='+want;
   var links=document.querySelectorAll('a[href]');
   for(var i=0;i<links.length;i++){
     var a=links[i], h=a.getAttribute('href')||'';
-    if(!isHub(h)) continue;
+    if(h.indexOf(NL)!==0 && h.indexOf(GH)!==0 && h.indexOf('/ai-empower')!==0 && h.indexOf('ai-empower/')!==0) continue;
     var u; try{ u=new URL(h,location.href); }catch(e){ continue; }
     var path=u.pathname.replace(/^\/ai-empower\/?/,'/');
-    if(path!=='/'&&path!=='') continue;              /* 只改指向 Hub 首頁的連結,深層連結不動 */
-    a.setAttribute('href',base+'/'+tag+u.hash);
+    if(path!=='/'&&path!=='') continue;
+    a.setAttribute('href',hubUrl(want));
     a.setAttribute('data-ae-route',want);
   }
 }
-function decide(){
-  var want;
-  if(cfg.mode==='force-gh') want='gh';
-  else if(cfg.mode==='force-nl') want='nl';
-  else{
-    try{ want=localStorage.getItem(KEY); }catch(e){}
-    if(want!=='gh'&&want!=='nl'){
-      want=(Math.random()*100 < (+cfg.gh||30)) ? 'gh' : 'nl';
-      try{ localStorage.setItem(KEY,want); }catch(e){}
-    }
-  }
-  rewrite(want);
-  /* 健康檢查:目標站掛了就改指另一站 */
+function go(want){
   var base=(want==='gh')?GH:NL, other=(want==='gh')?'nl':'gh';
+  mark(); pin(want);
   tfetch(base+'/assets/theme.js?hc='+Date.now(),{method:'HEAD',mode:'no-cors',cache:'no-store'},2500)
-    ['catch'](function(){ try{ localStorage.setItem(KEY,other); }catch(e){} rewrite(other); });
+    .then(function(){ location.replace(hubUrl(want)); })
+    ['catch'](function(){ pin(other); location.replace(hubUrl(other)); });
 }
-function start(){
-  tfetch(GH+'/route-config.json?h='+Math.floor(Date.now()/36e5),{cache:'no-store'},2500)
-  .then(function(r){ return r.ok? r.json():null; })['catch'](function(){ return null; })
-  .then(function(j){
-    if(j) for(var k in j) if(k in cfg) cfg[k]=j[k];
-    if(cfg.gasUrl){
-      return tfetch(cfg.gasUrl+(cfg.gasUrl.indexOf('?')<0?'?':'&')+'action=route&host=home',{cache:'no-store'},2500)
-        .then(function(r){ return r.ok? r.json():null; })
-        .then(function(g){ if(g&&g.mode){ cfg.mode=g.mode; if(g.gh!=null) cfg.gh=g.gh; } })['catch'](function(){});
-    }
-  })
-  .then(decide)['catch'](function(){ decide(); });
+function onReady(f){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',f); else f(); }
+function showGate(){
+  if(document.getElementById('aeGate')) return;
+  var d=document.createElement('div'); d.id='aeGate';
+  d.innerHTML='<div style="position:fixed;inset:0;background:rgba(15,23,42,.62);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px">'
+    +'<div style="background:#fff;border-radius:16px;max-width:400px;width:100%;padding:26px 28px;box-shadow:0 10px 40px rgba(0,0,0,.3)">'
+    +'<div style="font-size:17px;font-weight:800;color:#1e293b">🚦 請輸入學號後 4 碼,進入教學平台</div>'
+    +'<div style="font-size:12.5px;color:#64748b;margin:8px 0 14px;line-height:1.7">系統會依<b>單雙號</b>把你分流到對應平台(單號 → 主站、雙號 → 備援站),兩邊功能與資料完全相同,評量成績都送到同一個資料庫。</div>'
+    +'<input id="aeGateSid" inputmode="numeric" maxlength="6" placeholder="例如:6010" style="width:100%;box-sizing:border-box;border:2px solid #c7d2fe;border-radius:10px;padding:10px 12px;font-size:16px;letter-spacing:2px">'
+    +'<div id="aeGateErr" style="color:#dc2626;font-size:12px;min-height:16px;margin-top:4px"></div>'
+    +'<button id="aeGateGo" type="button" style="width:100%;margin-top:8px;background:#4338ca;color:#fff;border:0;border-radius:10px;padding:11px;font-size:15px;font-weight:800;cursor:pointer">進入教學平台 →</button>'
+    +'<div style="text-align:center;margin-top:10px"><a href="#" id="aeGateSkip" style="font-size:12px;color:#94a3b8">訪客/教師瀏覽,留在入口頁</a></div>'
+    +'</div></div>';
+  document.body.appendChild(d);
+  var inp=document.getElementById('aeGateSid'); try{ inp.focus(); }catch(e){}
+  function submit(){
+    var v=digits(inp.value);
+    if(v.length<2){ document.getElementById('aeGateErr').textContent='請輸入學號後 4 碼數字'; return; }
+    saveId(v,(idOf()||{}).cls||'');
+    var w=parity(v);
+    var el=document.getElementById('aeGateErr'); el.style.color='#4338ca';
+    el.textContent=((+v.charAt(v.length-1))%2===1?'單':'雙')+'號,轉往'+(w==='nl'?'主站':'備援站')+'中…';
+    go(w);
+  }
+  document.getElementById('aeGateGo').addEventListener('click',submit);
+  inp.addEventListener('keydown',function(e){ if(e.key==='Enter') submit(); });
+  document.getElementById('aeGateSkip').addEventListener('click',function(e){ e.preventDefault(); mark(); d.remove(); });
 }
-if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
+var cfg={mode:'auto',gh:30,gasUrl:''};
+function decide(){
+  var id=idOf(), pw=id?parity(id.sid):'';
+  var fallbackWant = pw || (function(){ try{var s=localStorage.getItem(KEY); if(s==='gh'||s==='nl') return s;}catch(e){} return (Math.random()*100<(+cfg.gh||30))?'gh':'nl'; })();
+  if(cfg.mode==='force-gh'||cfg.mode==='force-nl'){
+    var fw=(cfg.mode==='force-gh')?'gh':'nl';
+    onReady(function(){ rewrite(fw); });
+    if(!noAuto && !marked()) go(fw);
+    return;
+  }
+  onReady(function(){ rewrite(fallbackWant); });
+  if(noAuto || marked()) return;
+  if(pw){ go(pw); return; }
+  onReady(showGate);
+}
+tfetch(GH+'/route-config.json?h='+Math.floor(Date.now()/36e5),{cache:'no-store'},2500)
+.then(function(r){ return r.ok? r.json():null; })['catch'](function(){ return null; })
+.then(function(j){ if(j) for(var k in j) if(k in cfg) cfg[k]=j[k];
+  if(cfg.gasUrl){ return tfetch(cfg.gasUrl+(cfg.gasUrl.indexOf('?')<0?'?':'&')+'action=route&host=home',{cache:'no-store'},2500).then(function(r){return r.ok?r.json():null;}).then(function(g){ if(g&&g.mode){ cfg.mode=g.mode; } })['catch'](function(){}); }
+})
+.then(decide)['catch'](function(){ decide(); });
 })();
 </script>
 </head>
