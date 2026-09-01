@@ -251,6 +251,67 @@ footer{text-align:center;color:var(--mute);font-size:11.5px;padding:22px 20px 30
 footer .affil{color:var(--ink);font-weight:700}
 footer .affil .en{display:block;font-weight:500;color:var(--mute);font-size:11px}
 </style>
+<script>
+/* AE Router 分流主頁版 v1 — pjkuo.github.io 為分流入口:
+   把頁面上指向 AI 賦能教學 Hub 的連結依 70/30 黏性分流改寫(主站 Netlify / 備援 GitHub Pages),
+   分流結果以 ?r= 帶入 Hub 保持跨網域一致;目標站失效時自動改指另一站。
+   設定:https://pjkuo.github.io/ai-empower/route-config.json(mode/gh/gasUrl)。 */
+(function(){
+"use strict";
+var NL='https://ai-empower-hub.netlify.app', GH='https://pjkuo.github.io/ai-empower';
+function tfetch(url,opt,ms){ var c=new AbortController(); var t=setTimeout(function(){c.abort();},ms||2500); opt=opt||{}; opt.signal=c.signal; return fetch(url,opt).then(function(r){clearTimeout(t);return r;},function(e){clearTimeout(t);throw e;}); }
+var KEY='ae.route.v2', cfg={mode:'auto',gh:30,gasUrl:''};
+function isHub(href){
+  return href.indexOf(NL)===0 || href.indexOf(GH)===0 ||
+         href.indexOf('/ai-empower/')===0 || href==='/ai-empower' ||
+         (location.hostname==='pjkuo.github.io' && href.indexOf('ai-empower/')===0);
+}
+function rewrite(want){
+  var base=(want==='gh')?GH:NL, tag=(base.indexOf('?')<0?'?':'&')+'r='+want;
+  var links=document.querySelectorAll('a[href]');
+  for(var i=0;i<links.length;i++){
+    var a=links[i], h=a.getAttribute('href')||'';
+    if(!isHub(h)) continue;
+    var u; try{ u=new URL(h,location.href); }catch(e){ continue; }
+    var path=u.pathname.replace(/^\/ai-empower\/?/,'/');
+    if(path!=='/'&&path!=='') continue;              /* 只改指向 Hub 首頁的連結,深層連結不動 */
+    a.setAttribute('href',base+'/'+tag+u.hash);
+    a.setAttribute('data-ae-route',want);
+  }
+}
+function decide(){
+  var want;
+  if(cfg.mode==='force-gh') want='gh';
+  else if(cfg.mode==='force-nl') want='nl';
+  else{
+    try{ want=localStorage.getItem(KEY); }catch(e){}
+    if(want!=='gh'&&want!=='nl'){
+      want=(Math.random()*100 < (+cfg.gh||30)) ? 'gh' : 'nl';
+      try{ localStorage.setItem(KEY,want); }catch(e){}
+    }
+  }
+  rewrite(want);
+  /* 健康檢查:目標站掛了就改指另一站 */
+  var base=(want==='gh')?GH:NL, other=(want==='gh')?'nl':'gh';
+  tfetch(base+'/assets/theme.js?hc='+Date.now(),{method:'HEAD',mode:'no-cors',cache:'no-store'},2500)
+    ['catch'](function(){ try{ localStorage.setItem(KEY,other); }catch(e){} rewrite(other); });
+}
+function start(){
+  tfetch(GH+'/route-config.json?h='+Math.floor(Date.now()/36e5),{cache:'no-store'},2500)
+  .then(function(r){ return r.ok? r.json():null; })['catch'](function(){ return null; })
+  .then(function(j){
+    if(j) for(var k in j) if(k in cfg) cfg[k]=j[k];
+    if(cfg.gasUrl){
+      return tfetch(cfg.gasUrl+(cfg.gasUrl.indexOf('?')<0?'?':'&')+'action=route&host=home',{cache:'no-store'},2500)
+        .then(function(r){ return r.ok? r.json():null; })
+        .then(function(g){ if(g&&g.mode){ cfg.mode=g.mode; if(g.gh!=null) cfg.gh=g.gh; } })['catch'](function(){});
+    }
+  })
+  .then(decide)['catch'](function(){ decide(); });
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
+})();
+</script>
 </head>
 <body>
 
@@ -377,6 +438,9 @@ const PRACTICE=[
     <h1>AI 賦能教學平台入口<span class="en">AI-Empowered Teaching · Platform Portal</span></h1>
     <p class="hero-sub">以 AI 輔助學生自學、專題創作與評量回饋：心智圖 → IPO → Python → 應用模擬，四步驟教學在 AI 協作下加速深化。</p>
     <div class="hero-flow" id="heroFlow"></div>
+    <div id="aeHubCta" style="margin-top:18px">
+      <a id="aeHubLink" href="https://ai-empower-hub.netlify.app/" title="AI 賦能教學 Hub(自動分流:主站/備援站)" style="display:inline-block;background:#fff;color:#4338ca;font-weight:800;font-size:15px;padding:11px 24px;border-radius:12px;text-decoration:none;box-shadow:0 2px 12px rgba(0,0,0,.2)">🚀 進入 AI 賦能教學 Hub<span style="font-weight:600;opacity:.75">　專題 × IOC 課程 × 課前評量 × 統計 × 論文</span></a>
+    </div>
   </section>
 
   <section class="fresh" id="fresh">
