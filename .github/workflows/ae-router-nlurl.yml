@@ -1,0 +1,41 @@
+name: AE Router nlUrl patch
+on:
+  push:
+    paths:
+      - '.github/workflows/ae-router-nlurl.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply nlUrl support to index.html
+        run: |
+          python3 - <<'PYEOF'
+          import sys
+          p = 'index.html'
+          s = open(p, encoding='utf-8').read()
+          a = "var cfg={mode:'auto',gh:30,gasUrl:''};"
+          b = "var cfg={mode:'auto',gh:30,gasUrl:'',nlUrl:''};"
+          c = ".then(function(j){ if(j) for(var k in j) if(k in cfg) cfg[k]=j[k];\n  if(cfg.gasUrl){"
+          d = ".then(function(j){ if(j) for(var k in j) if(k in cfg) cfg[k]=j[k];\n  if(cfg.nlUrl){ NL=String(cfg.nlUrl).replace(/\\/+$/,''); }\n  if(cfg.gasUrl){"
+          na, nc = s.count(a), s.count(c)
+          if na != 1 or nc != 1:
+              print('ABORT: unexpected match counts cfg=%d chain=%d' % (na, nc))
+              sys.exit(1)
+          s = s.replace(a, b).replace(c, d)
+          open(p, 'w', encoding='utf-8').write(s)
+          print('patched index.html')
+          PYEOF
+      - name: Commit and push
+        run: |
+          git config user.name "POJEN"
+          git config user.email "kuo0615@gmail.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "no change"
+          else
+            git commit -m "AE Router v4:轉址主頁支援 route-config nlUrl(主站網址改為可設定,免改 HTML)"
+            git push
+          fi
