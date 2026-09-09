@@ -323,7 +323,7 @@ function showGate(){
   inp.addEventListener('keydown',function(e){ if(e.key==='Enter') submit(); });
   document.getElementById('aeGateSkip').addEventListener('click',function(e){ e.preventDefault(); d.remove(); });
 }
-var cfg={mode:'auto',gh:30,gasUrl:''};
+var cfg={mode:'auto',gh:30,gasUrl:'',nlUrl:''};
 function decide(){
   var fallbackWant = (function(){ try{var s=localStorage.getItem(KEY); if(s==='gh'||s==='nl') return s;}catch(e){} return (Math.random()*100<(+cfg.gh||30))?'gh':'nl'; })();
   if(cfg.mode==='force-gh'||cfg.mode==='force-nl'){
@@ -339,6 +339,7 @@ function decide(){
 tfetch(GH+'/route-config.json?h='+Math.floor(Date.now()/36e5),{cache:'no-store'},2500)
 .then(function(r){ return r.ok? r.json():null; })['catch'](function(){ return null; })
 .then(function(j){ if(j) for(var k in j) if(k in cfg) cfg[k]=j[k];
+  if(cfg.nlUrl){ NL=String(cfg.nlUrl).replace(/\/+$/,''); }
   if(cfg.gasUrl){ return tfetch(cfg.gasUrl+(cfg.gasUrl.indexOf('?')<0?'?':'&')+'action=route&host=home',{cache:'no-store'},2500).then(function(r){return r.ok?r.json():null;}).then(function(g){ if(g&&g.mode){ cfg.mode=g.mode; } })['catch'](function(){}); }
 })
 .then(decide)['catch'](function(){ decide(); });
