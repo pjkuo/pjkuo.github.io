@@ -250,6 +250,18 @@ main>section{margin-top:24px}
 footer{text-align:center;color:var(--mute);font-size:11.5px;padding:22px 20px 30px;line-height:1.7}
 footer .affil{color:var(--ink);font-weight:700}
 footer .affil .en{display:block;font-weight:500;color:var(--mute);font-size:11px}
+
+/* ===== P0 今天要做什麼（s4）與更多平台摺疊 ===== */
+.s4-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:920px}
+@media(max-width:760px){.s4-grid{grid-template-columns:repeat(2,1fr)}}
+.s4-btn{display:flex;flex-direction:column;gap:4px;background:#fff;color:#0f172a;border-radius:14px;padding:14px 16px;text-decoration:none;box-shadow:0 2px 10px rgba(15,23,42,.08);border:2px solid #e2e8f0;transition:.15s}
+.s4-btn:hover{border-color:#0891b2;transform:translateY(-2px)}
+.s4-btn b{font-size:17px}
+.s4-ic{font-size:22px;line-height:1}
+.s4-d{font-size:12.5px;color:#475569}
+.more-tools{margin:26px 0;border:1.5px dashed #cbd5e1;border-radius:14px;padding:12px 16px;background:#f8fafc}
+.more-tools>summary{cursor:pointer;font-weight:800;font-size:15.5px;color:#0f172a}
+.more-tools .mt-hint{font-weight:500;font-size:12.5px;color:#64748b;margin-left:8px}
 </style>
 <script>
 /* AE Router 轉址主頁版 v2 — pjkuo.github.io 為分流轉址主頁:
@@ -478,6 +490,20 @@ const PRACTICE=[
     </div>
   </section>
 
+  <section id="today">
+    <div class="sec-head">
+      <span class="bar"></span>
+      <div><h2>今天要做什麼？<span class="en">Start Here</span></h2>
+        <p id="s4week">📅 四顆按鈕就是你的日常——自己看、自己做、自己查。</p></div>
+    </div>
+    <div class="s4-grid" aria-label="今天要做什麼">
+      <a class="s4-btn" href="ai-empower/ioc.html"><span class="s4-ic">🖥</span><b>本週學習</b><span class="s4-d">IOC 單元：模擬 → 講義 → 小測</span></a>
+      <a class="s4-btn" href="AI-empower-platform/"><span class="s4-ic">🎨</span><b>專題創作</b><span class="s4-d">四步驟，想法變作品</span></a>
+      <a class="s4-btn" href="ai-empower/weekly.html"><span class="s4-ic">📈</span><b>我的學習週報</b><span class="s4-d">看進度、拿下一步建議</span></a>
+      <a class="s4-btn" href="ai-empower/manual.html"><span class="s4-ic">🧭</span><b>新手上路</b><span class="s4-d">手冊＋3 分鐘導覽影片</span></a>
+    </div>
+  </section>
+
   <section class="fresh" id="fresh">
     <span class="fresh-badge">🎓 新生必看 · 30 秒看懂</span>
     <h2>四個步驟，把一個想法做成能展示的作品<span class="en">Four steps from an idea to a presentable project</span></h2>
@@ -503,6 +529,9 @@ const PRACTICE=[
     </div>
     <div class="fresh-foot"><span>⏱ <b>第一次</b>走完約 15 分鐘</span><span>🏫 AI 由老師代管，輸入班級碼即可，不用申請金鑰</span><span>💾 作品存在<b>同一台電腦的同一個瀏覽器</b>，換機前先「匯出專案」</span><span>📊 完成後別忘了 <a href="https://pjkuo.github.io/AICT-assess-platform/" target="_blank" rel="noopener" style="color:var(--primary);font-weight:700">4C 學習成效評量</a></span></div>
   </section>
+
+  <details class="more-tools" id="more">
+    <summary>📦 更多平台與資源<span class="mt-hint">課程平台原始入口・專題工具・影片教學（進階／教師）</span></summary>
 
   <section id="platforms">
     <div class="sec-head">
@@ -542,6 +571,7 @@ const PRACTICE=[
     </div>
     <div class="vnote" id="vidNote"></div>
   </section>
+  </details>
 
   <section id="access">
     <div class="sec-head">
@@ -747,6 +777,16 @@ const LINE_URL='';
   }
   if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init); else init();
 })();
+</script>
+<script>
+/* P0：週次提示（semStart 2026-09-14） */
+(function(){try{
+  var el=document.getElementById('s4week'); if(!el) return;
+  var st=new Date('2026-09-14T00:00:00+08:00'), w=Math.floor((Date.now()-st.getTime())/604800000)+1;
+  if(w>=1&&w<=18){
+    el.innerHTML='📅 第 '+w+' 週 · 今天要做什麼？'+(w<=2?' <a href="ai-empower/presurvey.html">新生請先完成課前評量 →</a>':'');
+  }else if(w<1){ el.innerHTML='📅 開學倒數 · 新生請先完成 <a href="ai-empower/presurvey.html">課前評量 →</a>'; }
+}catch(e){}})();
 </script>
 </body>
 </html>
