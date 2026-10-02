@@ -271,7 +271,7 @@ footer .affil .en{display:block;font-weight:500;color:var(--mute);font-size:11px
    轉址帶 ?r=&sid=&cls=,Hub 端自動帶入身分。頁面上指向 Hub 的連結也會依判定結果改寫。 */
 (function(){
 "use strict";
-var NL='https://ai-empower-hub.netlify.app', GH='https://pjkuo.github.io/ai-empower';
+var NL='https://ai-empower-hub.pages.dev', GH='https://pjkuo.github.io/ai-empower';
 if(location.hostname!=='pjkuo.github.io') return;
 var p; try{ p=new URLSearchParams(location.search); }catch(e){ return; }
 var noAuto = p.has('stay')||p.has('embed');
