@@ -243,6 +243,10 @@ main>section{margin-top:24px}
 .acc.yt .acc-btn{background:#DC2626;color:#fff}
 .acc.line .acc-btn{background:#06C755;color:#fff}
 .acc.qr .acc-btn{border:1.5px solid var(--primary);color:var(--primary)}
+.acc.vc{border-top:3px solid #29297A}
+.acc.vc .acc-ic{background:linear-gradient(135deg,#29297A,#2E5496)}
+.acc.vc .acc-ic svg{width:28px;height:28px}
+.acc.vc .acc-btn{background:#29297A;color:#fff}
 .qr-box{flex:0 0 90px;width:90px;height:90px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px}
 .qr-box .qr-svg{width:100%;height:100%;display:block}
 
@@ -577,7 +581,7 @@ const PRACTICE=[
     <div class="sec-head">
       <span class="bar"></span>
       <div><h2>課程資源 · 加入<span class="en">Resources &amp; Join</span></h2>
-        <p>教學頻道、平台入口 QR 與 LINE 課程社群。Channel, portal QR, and LINE community.</p></div>
+        <p>教學頻道、平台入口 QR、數位名片與 LINE 課程社群。Channel, portal QR, digital card, and LINE community.</p></div>
     </div>
     <div class="access-grid">
       <a class="acc yt link" id="ytCard" href="#" target="_blank" rel="noopener">
@@ -598,6 +602,13 @@ const PRACTICE=[
           <div class="acc-url">pjkuo.github.io/yt</div>
           <a class="acc-btn" href="https://www.youtube.com/@paulkuo4106" target="_blank" rel="noopener">前往頻道 ↗</a></div>
       </div>
+      <a class="acc vc link" id="cardEntry" href="card/" title="郭博仁數位名片：可寫入 NFC，輕觸或掃 QR 開啟">
+        <div class="acc-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#E0B44A" stroke-width="2" stroke-linecap="round"><path d="M5 9.2a4.2 4.2 0 0 1 0 5.6"/><path d="M8.6 6.6a8 8 0 0 1 0 10.8"/><path d="M12.2 4a11.8 11.8 0 0 1 0 16"/></svg></div>
+        <div class="acc-tx"><b>數位名片</b><span class="en">Digital Card · NFC</span>
+          <span class="d">輕觸 NFC 或掃 QR：聯絡方式、教學平台作品、論文與影音。</span>
+          <div class="acc-url">pjkuo.github.io/card</div>
+          <span class="acc-btn">開啟名片 →</span></div>
+      </a>
       <a class="acc line link" id="lineCard" href="#" target="_blank" rel="noopener">
         <div class="acc-ic" aria-hidden="true">LINE</div>
         <div class="acc-tx"><b>LINE 課程社群</b><span class="en">Class Community</span>
