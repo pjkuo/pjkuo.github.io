@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta property="og:type" content="profile">
+<meta property="og:title" content="郭博仁 Po-Jen Kuo｜數位名片">
+<meta property="og:description" content="屏科大資管系兼任講師・中華電信數據分公司高級工程師。AI 賦能教學、人機協作 HITL／HOTL、教學平台作品。">
+<meta property="og:url" content="https://pjkuo.github.io/card/">
+<link rel="canonical" href="https://pjkuo.github.io/card/">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>郭博仁 數位名片</title>
+<meta name="description" content="郭博仁 Po-Jen Kuo｜屏科大資管系兼任講師・中華電信數據分公司高級工程師。可寫入 NFC 的數位名片與教學作品集。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="card.css">
+
+</head>
+<body>
+<div class="wrap">
+  <aside class="side" aria-label="名片">
+    <button class="card" id="card" type="button" aria-pressed="false" aria-label="翻轉名片：正面是聯絡資訊，背面是 QR 碼">
+      <span class="card-inner">
+        <span class="face front" id="front">
+          <span class="f-top">
+            <span class="f-org">國立屏東科技大學<br>資訊管理系</span>
+            <svg class="f-mark" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 9.2a4.2 4.2 0 0 1 0 5.6"/><path d="M8.6 6.6a8 8 0 0 1 0 10.8"/><path d="M12.2 4a11.8 11.8 0 0 1 0 16"/><path d="M15.8 1.6a15.6 15.6 0 0 1 0 20.8" opacity=".55"/></svg>
+          </span>
+          <span class="f-who">
+            <span class="f-name">郭博仁</span>
+            <span class="f-latin">Po-Jen Kuo</span>
+          </span>
+          <span class="f-foot">
+            <span>資訊管理系 兼任講師</span>
+            <span>中華電信數據分公司 高級工程師</span>
+            <span class="mono">pjkuo@npust.edu.tw</span>
+          </span>
+          <svg class="f-waves" viewBox="0 0 300 70" fill="none" stroke="var(--gold)" stroke-width="1.6" aria-hidden="true"><path d="M0 34Q37.5 22 75 34T150 34T225 34T300 34"/><path d="M0 48Q37.5 36 75 48T150 48T225 48T300 48" opacity=".75"/><path d="M0 62Q37.5 50 75 62T150 62T225 62T300 62" opacity=".5"/></svg>
+        </span>
+        <span class="face back" id="back" aria-hidden="true">
+          <span class="b-qr" id="cardQr"></span>
+          <span class="b-text">
+            <span class="b-handle">住在海邊的資管人</span>
+            <span class="b-cta"><b>輕觸 NFC</b>，或用相機<br>掃描左側 QR 開啟名片頁</span>
+            <span class="b-nfc">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--back-ink)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 9.2a4.2 4.2 0 0 1 0 5.6"/><path d="M8.6 6.6a8 8 0 0 1 0 10.8"/><path d="M12.2 4a11.8 11.8 0 0 1 0 16"/></svg>
+              <span class="b-spec" id="backSpec">90 × 54 mm · NTAG213</span>
+            </span>
+          </span>
+        </span>
+      </span>
+    </button>
+    <div class="card-cap"><span>實體名片 90 × 54 mm（點卡片翻面）</span><button class="ghost" id="flipBtn" type="button">看背面 QR</button></div>
+
+    <div class="actions">
+      <button class="act primary" id="vcardBtn" type="button" aria-expanded="false" aria-controls="vcardPanel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="8" r="3.6"/><path d="M3.5 20a6.5 6.5 0 0 1 13 0"/><path d="M19 8v6M16 11h6"/></svg>
+        <span><b>加入通訊錄</b><small>掃描 vCard QR</small></span>
+      </button>
+      <button class="act" id="mailBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 7 8.5-7"/></svg>
+        <span><b>複製 Email</b><small id="mailText">pjkuo@npust.edu.tw</small></span>
+      </button>
+      <a class="act" href="https://pjkuo.github.io/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>
+        <span><b>教學平台入口</b><small>pjkuo.github.io</small></span>
+      </a>
+      <a class="act" href="https://www.youtube.com/@paulkuo4106" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="4"/><path d="m10 9 5 3-5 3z" fill="currentColor"/></svg>
+        <span><b>YouTube 頻道</b><small>@paulkuo4106</small></span>
+      </a>
+    </div>
+
+    <div class="panel" id="vcardPanel" hidden>
+      <div class="qr" id="vcardQr"></div>
+      <div>
+        <h3>加入通訊錄</h3>
+        <p id="vcardHint">用另一支手機的相機掃描，會跳出「加入聯絡人」。</p>
+        <p class="mono" id="vcardBytes" style="font-size:12px;margin-top:4px"></p>
+        <div class="row"><a class="ghost" id="vcfLink" href="pjkuo.vcf" download="郭博仁.vcf" hidden>本機下載聯絡人（.vcf）</a><button class="ghost" id="vcardCopy" type="button">複製 vCard 文字</button></div>
+        <pre id="vcardText" hidden></pre>
+      </div>
+    </div>
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+  </aside>
+
+  <main class="main">
+    <header class="intro">
+      <p class="eyebrow">住在海邊的資管人 · Po-Jen Kuo</p>
+      <h1>由操作而監管，<br>先思考後驗證</h1>
+      <p class="lead">我在中華電信數據分公司擔任高級工程師，同時在國立屏東科技大學資訊管理系兼任授課。教學對象是資管大一與車輛、機械、環工、植醫、養殖等非資訊科系新生；做法是讓學生<em>先自己想清楚，再用 AI 驗證</em>，從親手做一路走到會監管 AI。</p>
+      <ul class="chips" aria-label="專長">
+        <li>網際網路與企業網路</li><li>雲端運算</li><li>物聯網 IoT</li><li>大數據分析</li><li>AI 賦能運算思維教學</li><li>人機協作 HITL／HOTL</li><li>智慧農業應用</li>
+      </ul>
+    </header>
+
+    <section aria-labelledby="h-proj">
+      <div class="sec-head"><p class="eyebrow">Platforms</p><h2 id="h-proj">教學平台作品</h2><p>全部是可直接開啟使用的單頁網站，學生用瀏覽器就能自學、練習與評量。</p></div>
+      <ul class="projects">
+        <li class="proj lead-proj"><a href="https://ai-empower-hub.pages.dev/" target="_blank" rel="noopener">
+          <h3>AI 賦能教學 Hub</h3>
+          <p>單一入口串起課前評量、專題創作工作流、IOC 課程模擬、4C 評量與統計分析，以及由評量數據生成 HOTL 論文內文。</p>
+          <span class="url">ai-empower-hub.pages.dev ↗</span></a></li>
+        <li class="proj"><a href="https://pjkuo.github.io/AI-empower-platform/" target="_blank" rel="noopener">
+          <h3>智慧專題創作平台</h3>
+          <p>心智圖 → IPO → Python → 簡報 → 影片，每一步都有 AI 協助；Python 在瀏覽器內直接執行。</p>
+          <span class="url">pjkuo.github.io/AI-empower-platform ↗</span></a></li>
+        <li class="proj"><a href="https://pjkuo.github.io/IOC-platform/" target="_blank" rel="noopener">
+          <h3>計算機概論與實習 IOC</h3>
+          <p>硬體、軟體、網路三大單元的課程入口，學生端模擬平台與教師端管理分開。</p>
+          <span class="url">pjkuo.github.io/IOC-platform ↗</span></a></li>
+        <li class="proj"><a href="https://pjkuo.github.io/cc-platform/" target="_blank" rel="noopener">
+          <h3>CC 實習平台</h3>
+          <p>多站計算機實習：3C 拆裝訓練、CS Unplugged 五站闖關、期中 300 題題庫。</p>
+          <span class="url">pjkuo.github.io/cc-platform ↗</span></a></li>
+        <li class="proj"><a href="https://pjkuo.github.io/AICT-assess-platform/" target="_blank" rel="noopener">
+          <h3>4C 學習成效即時評量</h3>
+          <p>16 題 4C 素養自評，作答後即時產生統計與報告。</p>
+          <span class="url">pjkuo.github.io/AICT-assess-platform ↗</span></a></li>
+        <li class="proj"><a href="https://pjkuo.github.io/Peer-evaluation/" target="_blank" rel="noopener">
+          <h3>期末報告同學互評</h3>
+          <p>依報告順序開放、本班限定、當天截止，附教師分析儀表板。</p>
+          <span class="url">pjkuo.github.io/Peer-evaluation ↗</span></a></li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="h-frame">
+      <div class="sec-head"><p class="eyebrow">Research framework</p><h2 id="h-frame">由作而管：專題一圈</h2><p>學生在四站親手完成專題，站與站之間交給 AI 轉換並由人監管，最後由 AI 彙整、人做決策。</p></div>
+      <div class="frame">
+        <ol class="stations">
+          <li><span class="n">站 1</span><b>心智圖</b></li>
+          <li><span class="n">站 2</span><b>IPO 表</b></li>
+          <li><span class="n">站 3</span><b>演算法</b></li>
+          <li><span class="n">站 4</span><b>程式驗證</b></li>
+        </ol>
+        <div class="hub"><span class="tag hootl" style="padding:2px 8px">HOOTL</span>專題製作</div>
+        <ul class="legend">
+          <li><span class="tag hitl">HITL</span><span>人在迴路內：每一站由學生先思考、親手完成。</span></li>
+          <li><span class="tag hotl">HOTL</span><span>人在迴路上：站間轉換交給 AI，學生負責稽核與修正。</span></li>
+          <li><span class="tag hootl">HOOTL</span><span>人在迴路外：AI 自主彙整專題成果，人類治理決策。</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section aria-labelledby="h-pub">
+      <div class="sec-head"><p class="eyebrow">Publications</p><h2 id="h-pub">論文發表</h2></div>
+      <ul class="pubs">
+        <li class="pub"><span class="yr">2026</span><div>
+          <h3>Performance Evaluation of Human–Machine Collaboration in Smart Agriculture Using Statistical Modeling and Simulation</h3>
+          <p class="venue"><i>Engineering Proceedings</i>, 139(1), 7 · MDPI · 發表於 SSIMF 2025（新加坡）</p>
+          <p class="meta"><span class="pill ok">已刊出・開放取用</span><a class="mono" href="https://doi.org/10.3390/engproc2026139007" target="_blank" rel="noopener">doi.org/10.3390/engproc2026139007</a></p>
+        </div></li>
+        <li class="pub"><span class="yr">2026</span><div>
+          <h3>Human-in-the-Loop, From Collaborating to Managing: Effects of a Think-Then-Verify Workflow on Computational Thinking and 4C Competencies</h3>
+          <p class="venue">ICECER 2026 · 伊斯坦堡 · 12 月</p>
+          <p class="meta"><span class="pill acc">已接受</span></p>
+        </div></li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="h-course">
+      <div class="sec-head"><p class="eyebrow">Teaching</p><h2 id="h-course">授課課程</h2></div>
+      <dl class="courses">
+        <div><dt>115-1</dt><dd>計算機概論、計算機概論實習 <span>資管一A</span></dd></div>
+        <div><dt>115-1</dt><dd>數位科技與AI應用 <span>車輛一A、機械一A</span></dd></div>
+        <div><dt>114-2</dt><dd>運算思維 <span>環工、植醫、養殖</span></dd></div>
+      </dl>
+    </section>
+
+    <section aria-labelledby="h-vid">
+      <div class="sec-head"><p class="eyebrow">Videos</p><h2 id="h-vid">教學影音</h2></div>
+      <ul class="vids">
+        <li><a href="https://www.youtube.com/watch?v=6MPQFcjCr3c" target="_blank" rel="noopener"><span class="play"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor"/></svg></span><span><b>AI 賦能教學 Hub 導覽</b><small>英文旁白・中文字幕</small></span><span class="t">2:08</span></a></li>
+        <li><a href="https://www.youtube.com/watch?v=x4DymE_r3ys" target="_blank" rel="noopener"><span class="play"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor"/></svg></span><span><b>IOC 平台操作教學</b><small>計算機概論與實習</small></span><span class="t">YouTube</span></a></li>
+        <li><a href="https://www.youtube.com/watch?v=SpSnDyOkfoU" target="_blank" rel="noopener"><span class="play"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor"/></svg></span><span><b>計算機概論全課程</b><small>英語版</small></span><span class="t">YouTube</span></a></li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="h-nfc">
+      <div class="sec-head"><p class="eyebrow">Phygital · NFC</p><h2 id="h-nfc">虛實整合：這張名片怎麼運作</h2><p>「AI VC 課：數位名片實務」示範作品。實體卡內嵌 NFC 貼紙、背面印 QR，兩條路都通往這一頁。</p></div>
+      <ol class="flow">
+        <li><b>實體名片</b><span>背面貼 NTAG 晶片、印 QR 碼</span></li>
+        <li><b>輕觸或掃描</b><span>手機靠近卡片，或用相機掃 QR</span></li>
+        <li><b>開啟名片頁</b><span>就是你現在看到的這一頁</span></li>
+        <li><b>存聯絡人・看作品</b><span>一鍵加入通訊錄，再逛平台與影音</span></li>
+      </ol>
+      <div class="urlbox"><code id="cardUrl">https://pjkuo.github.io/</code><button class="ghost" id="urlCopy" type="button">複製名片網址</button></div>
+      <div class="chip-table">
+        <table>
+          <thead><tr><th>晶片</th><th>可用容量</th><th>寫入內容</th><th>本名片需要</th></tr></thead>
+          <tbody>
+            <tr id="row213"><td>NTAG213</td><td class="num">144 bytes</td><td>名片網址（建議）</td><td class="num" id="needUrl">—</td></tr>
+            <tr id="row215"><td>NTAG215</td><td class="num">504 bytes</td><td>網址或 vCard</td><td class="num" id="needVcard">—</td></tr>
+            <tr><td>NTAG216</td><td class="num">888 bytes</td><td>網址＋vCard 兩筆記錄</td><td class="num" id="needBoth">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <details class="steps">
+        <summary>用 NFC Tools 把網址寫進貼紙（5 步）</summary>
+        <ol>
+          <li>準備 NTAG213 貼紙（只寫網址就夠用），貼在名片背面 QR 旁。</li>
+          <li>手機安裝 <b>NFC Tools</b>（Android／iOS 皆有），Android 先在設定開啟 NFC。</li>
+          <li>點「寫入」→「新增記錄」→「網址／URL」，貼上上方的名片網址。</li>
+          <li>點「寫入」，把貼紙靠近手機：Android 多在背面中央，iPhone 在機身頂端。</li>
+          <li>重新輕觸測試，跳出通知並開到本頁就完成。<br><span class="warn">「鎖定標籤」可防止被改寫，但鎖了就不能再改，確認網址正確後再鎖。</span></li>
+        </ol>
+      </details>
+    </section>
+
+    <footer>
+      <span class="h">郭博仁 Po-Jen Kuo</span>
+      <span>國立屏東科技大學資訊管理系 · 中華電信數據分公司</span>
+    </footer>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script src="card.js"></script>
+
+</body>
+</html>
